@@ -54061,6 +54061,15 @@ isolated roots of `E(X^2) - X * O(X^2)` at `k + 1`. At `k = 1` over `ℚ`, with 
 three isolated roots against the cap `2`. The theorem `three_isolated_roots` records the
 roots and `not_isolatedCountResidual_rat_one` the contradiction.
 
+Family: the failure is not a single sporadic instance and does not need a large `E`. For every
+`k ≥ 1`, Lagrange interpolation of `(i+1)^2 ↦ i+1` on `i < k + 2` gives `Efam k` with
+`degree < k + 2` and `Efam k (x^2) = x` at `x = 1, …, k + 2`. With `O = 1` these are `k + 2`
+isolated roots against the cap `k + 1` (`Efam_eval`, `Efam_degree_lt`,
+`not_isolatedCountResidual_rat`). So any degree bound on `E` of the form `deg E < k + 2` still
+fails over `ℚ`; only a bound tied to `k` that makes `deg(E(X^2) - X * O(X^2)) < k + 2`, or a
+finite-subgroup domain restriction, can repair the statement. Same technique as the merged
+`SecondDescentStuckResidual` refutation.
+
 Scope: this refutes the recorded statement only. The intended restrictions (halved
 `2`-power subgroup domain, degree bound on `E`) are not discharged here, and the Kelley
 general-position count and the production Delta Star problem remain open. It does not
@@ -54073,5 +54082,5 @@ scripts/pg-iterate.sh Research/ProximityPrize/Frontier/_IsolatedCountResidualRef
 scripts/lake-locked.sh build Research.ProximityPrize.Frontier._IsolatedCountResidualRefuted
 ```
 
-Evidence class: Lean proof certificate; both declarations use only `propext`,
+Evidence class: Lean proof certificate; all declarations of the file use only `propext`,
 `Classical.choice` and `Quot.sound`.
