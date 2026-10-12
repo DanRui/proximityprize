@@ -1779,6 +1779,7 @@ import Research.ProximityPrize.Frontier._InvEnergyLargeSupportBSG
 import Research.ProximityPrize.Frontier._IrreducibilityCapstone
 import Research.ProximityPrize.Frontier._IsoSparsityMasonStothers
 import Research.ProximityPrize.Frontier._IsolatedCountKelley
+import Research.ProximityPrize.Frontier._IsolatedCountResidualRefuted
 import Research.ProximityPrize.Frontier._JacAutocorrL2SupGap
 import Research.ProximityPrize.Frontier._JacAutocorrWeilDescentToCurveSum
 import Research.ProximityPrize.Frontier._JacKatzBoundedConductorFamily

@@ -54044,3 +54044,34 @@ and `scripts/lake-locked.sh build Research.ProximityPrize.Frontier._MCAGoodRadiu
 The four printed declarations use only `propext`, `Classical.choice`, and
 `Quot.sound`. The initial tracked build passed 3502 jobs. Full repository and
 hosted gates must be reported separately.
+
+---
+
+### [164-isolated-count-residual-refuted] Unbounded `E` refutes the isolated-root cap
+
+Date: 2026-10-12. Target:
+`ProximityGap.Frontier.AntipodalEvenOddDescent.IsolatedCountResidual`, declared in
+`Frontier/_AntipodalEvenOddDescent.lean`. This is a statement-level refutation of a named
+root-count input, not a production Delta Star counterexample.
+
+The declaration quantifies over every `E O : F[X]` with only `O.natDegree < k`. `E` has no
+degree bound, no subgroup restriction and no decodedness restriction, yet the claim caps the
+isolated roots of `E(X^2) - X * O(X^2)` at `k + 1`. At `k = 1` over `ℚ`, with `O = 1` and
+`E = -X^2/6 + 7X/6`, one has `E(0) = 0`, `E(1) = 1` and `E(4) = 2`, so `x = 0, 1, 2` are
+three isolated roots against the cap `2`. The theorem `three_isolated_roots` records the
+roots and `not_isolatedCountResidual_rat_one` the contradiction.
+
+Scope: this refutes the recorded statement only. The intended restrictions (halved
+`2`-power subgroup domain, degree bound on `E`) are not discharged here, and the Kelley
+general-position count and the production Delta Star problem remain open. It does not
+close #164.
+
+Reproduction at the final PR commit:
+
+```
+scripts/pg-iterate.sh Research/ProximityPrize/Frontier/_IsolatedCountResidualRefuted.lean
+scripts/lake-locked.sh build Research.ProximityPrize.Frontier._IsolatedCountResidualRefuted
+```
+
+Evidence class: Lean proof certificate; both declarations use only `propext`,
+`Classical.choice` and `Quot.sound`.
