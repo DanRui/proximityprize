@@ -55,9 +55,10 @@ theorem not_isolatedCountResidual_rat_one : ¬ IsolatedCountResidual ℚ 1 := by
 
 /-! ## A family for every `k ≥ 1`, with `E` of degree at most `k + 1`
 
-Interpolating `u ↦ √u` at the `k + 2` nodes `u_i = (i+1)²` gives `E` with `E(u_i) = i + 1`. With
-`O = 1` every `x = i + 1` is an isolated root of `E(X²) - X`. So `k + 2` isolated roots beat the cap
-`k + 1`, for every `k ≥ 1`. The degree of `E` is below `k + 2`, so the failure is not caused by an
+Interpolating `u ↦ √u` at the `k + 2` nodes `u_i = (i+1)²` gives `E` with
+`E(u_i) = i + 1`. With `O = 1` every `x = i + 1` is an isolated root of `E(X²) - X`.
+So `k + 2` isolated roots beat the cap `k + 1`, for every `k ≥ 1`. The degree of `E`
+is below `k + 2`, so the failure is not caused by an
 unbounded degree of `E`: `E(X²) - X·O(X²)` has degree below `2k + 4`. -/
 
 /-- The interpolant of `(i+1)² ↦ i+1` on `i < k + 2`. -/
@@ -99,7 +100,8 @@ theorem Efam_eval (k i : ℕ) (hi : i < k + 2) :
 
 /-- **Family.** For every `k ≥ 1`, `IsolatedCountResidual ℚ k` is false: the `k + 2` points
 `1, …, k + 2` are isolated roots, against the cap `k + 1`. -/
-theorem not_isolatedCountResidual_rat (k : ℕ) (hk : 1 ≤ k) : ¬ IsolatedCountResidual ℚ k := by
+theorem not_isolatedCountResidual_rat (k : ℕ) (hk : 1 ≤ k) :
+    ¬ IsolatedCountResidual ℚ k := by
   intro h
   have hsub : (↑((Finset.range (k + 2)).image (fun i : ℕ => (i : ℚ) + 1)) : Set ℚ) ⊆
       {x : ℚ | ((Efam k).comp (X ^ 2) - X * (C (1 : ℚ)).comp (X ^ 2)).IsRoot x ∧
