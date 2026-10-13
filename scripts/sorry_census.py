@@ -11,9 +11,11 @@ Usage:
   python3 scripts/sorry_census.py --out census.json
 
 A token is classified as:
-  hole — `sorry`/`admit` in live code (a tactic body or term position)
-  doc  — inside a docstring `/-- ... -/`, block comment `/- ... -/`, or
-         line comment `-- ...` (includes prose words containing 'admit')
+  hole — `sorry`/`admit` in live code (a tactic body or term position),
+         including code spliced into an interpolated string (`s!"{sorry}"`)
+  doc  — inside a docstring `/-- ... -/`, block comment `/- ... -/`,
+         line comment `-- ...`, or a string / raw-string literal
+         (includes prose words containing 'admit')
 The containing declaration is the nearest preceding `theorem|lemma|def|
 instance|example|abbrev|opaque` header.
 """
@@ -33,30 +35,229 @@ DECL_RE = re.compile(
 TOKEN_RE = re.compile(r"\b(sorry|admit)\b")
 
 
+_HEX = "0123456789abcdefABCDEF"
+_IDENT_EXTRA = "_'"
+
+
+def _ident_char(ch: str) -> bool:
+    return ch.isalnum() or ch in _IDENT_EXTRA
+
+
+def _escape_end(text: str, i: int, *, interpolant: bool, allow_gap: bool) -> int | None:
+    """Index after a Lean 4.30 string escape starting at `text[i]`, if it is valid.
+
+    Handles backslash, quote, apostrophe, `n`/`t`/`r`, `\\xHH`, `\\uHHHH`,
+    a string gap (backslash, newline, then trailing whitespace), and `\\{`
+    inside interpolated strings.
+    """
+    n = len(text)
+    if i + 1 >= n or text[i] != "\\":
+        return None
+    nxt = text[i + 1]
+    quotable = "\\\"'rnt{" if interpolant else "\\\"'rnt"
+    if nxt in quotable:
+        return i + 2
+    if nxt == "x" and i + 3 < n and text[i + 2] in _HEX and text[i + 3] in _HEX:
+        return i + 4
+    if nxt == "u" and i + 5 < n and all(c in _HEX for c in text[i + 2 : i + 6]):
+        return i + 6
+    if allow_gap and nxt == "\n":
+        j = i + 2
+        while j < n and text[j] != "\n" and text[j].isspace():
+            j += 1
+        return j
+    return None
+
+
+def _raw_token_start(text: str, i: int) -> bool:
+    """True when `r` at `i` begins a token, so `r#*"..."#*` is a raw string.
+
+    An identifier such as `foor"..."` is not a raw string. A numeric token may
+    end immediately before `r` (`1r"..."`, `1_0r"..."`, `0x1r#...#`); hex,
+    binary, and octal prefixes are recognized, scientific exponents are not.
+    """
+    if i == 0:
+        return True
+    prev = text[i - 1]
+    if not _ident_char(prev):
+        return True
+    if not prev.isdigit():
+        return False
+    k = i - 1
+    while k >= 0 and (text[k].isdigit() or text[k] == "_"):
+        k -= 1
+    if (
+        k >= 1
+        and text[k] in "xXoObB"
+        and text[k - 1] == "0"
+        and (k == 1 or not _ident_char(text[k - 2]))
+    ):
+        return True
+    return k < 0 or not _ident_char(text[k])
+
+
+def _interpolated_quote(text: str, quote: int) -> bool:
+    """True when `"` opens `s!"..."`, `m!"..."`, `println! "..."`, and similar."""
+    j = quote - 1
+    while j >= 0 and text[j] in " \t":
+        j -= 1
+    if j <= 0 or text[j] != "!":
+        return False
+    return _ident_char(text[j - 1])
+
+
 def strip_comments_map(text: str) -> list[bool]:
-    """Return per-char mask: True if the char is inside a comment/docstring."""
-    mask = [False] * len(text)
-    i, n = 0, len(text)
-    depth = 0
-    while i < n:
-        if depth == 0 and text.startswith("--", i):
-            j = text.find("\n", i)
-            j = n if j == -1 else j
-            for k in range(i, j):
-                mask[k] = True
-            i = j
-        elif text.startswith("/-", i):
-            depth += 1
-            mask[i] = mask[i + 1 if i + 1 < n else i] = True
-            i += 2
-        elif depth > 0 and text.startswith("-/", i):
-            depth -= 1
-            mask[i] = mask[i + 1 if i + 1 < n else i] = True
-            i += 2
-        else:
+    """Return per-char mask: True if the char is not live code.
+
+    Comments and docstrings are masked, and so is literal text of `"..."`,
+    raw `r#*"..."#*` strings, and the literal chunks of interpolated strings.
+    Code inside `prefix! "{...}"` stays live, so `s!"{sorry}"` is still a hole.
+    Masking literals stops `--` / `/-` inside a string from swallowing a later
+    `sorry`, which the comment-only scan reported as a docstring mention.
+    """
+    n = len(text)
+    mask = [False] * n
+
+    def mark(start: int, stop: int) -> None:
+        for k in range(start, stop):
+            mask[k] = True
+
+    def scan_block(i: int) -> int:
+        depth = 0
+        while i < n:
+            if text.startswith("/-", i):
+                depth += 1
+                mark(i, min(i + 2, n))
+                i += 2
+                continue
+            if depth > 0 and text.startswith("-/", i):
+                depth -= 1
+                mark(i, min(i + 2, n))
+                i += 2
+                if depth == 0:
+                    return i
+                continue
             if depth > 0:
                 mask[i] = True
             i += 1
+        return i
+
+    def scan_raw(i: int) -> int:
+        hashes = 0
+        j = i + 1
+        while j < n and text[j] == "#":
+            hashes += 1
+            j += 1
+        if j >= n or text[j] != '"':
+            return i + 1
+        j += 1
+        mark(i, j)
+        while j < n:
+            if text[j] != '"':
+                mask[j] = True
+                j += 1
+                continue
+            mask[j] = True
+            j += 1
+            if hashes == 0:
+                return j
+            count = 0
+            while count < hashes and j < n and text[j] == "#":
+                mask[j] = True
+                j += 1
+                count += 1
+            if count == hashes:
+                return j
+        return j
+
+    def scan_string(i: int) -> int:
+        interpolated = _interpolated_quote(text, i)
+        mask[i] = True
+        i += 1
+        while i < n:
+            if text[i] == "\\":
+                end = _escape_end(text, i, interpolant=interpolated, allow_gap=True)
+                if end is None:
+                    mask[i] = True
+                    i += 1
+                    continue
+                mark(i, end)
+                i = end
+                continue
+            if text[i] == '"':
+                mask[i] = True
+                return i + 1
+            if interpolated and text[i] == "{":
+                mask[i] = True
+                i = scan_code(i + 1, interpolating=True)
+                if i < n and text[i] == "}":
+                    mask[i] = True
+                    i += 1
+                    continue
+                return i
+            mask[i] = True
+            i += 1
+        return i
+
+    def skip_char_lit(i: int) -> int | None:
+        # Primes (`x'`) and `''` are not character literals. `'"'` must not
+        # open a string, or the following source is masked through the next `"`.
+        if i + 2 >= n or text[i] != "'" or text[i + 1] == "'":
+            return None
+        if i > 0 and _ident_char(text[i - 1]):
+            return None
+        if text[i + 1] == "\\":
+            end = _escape_end(text, i + 1, interpolant=False, allow_gap=False)
+            if end is None:
+                return None
+            j = end
+        elif text[i + 1] == "\n":
+            return None
+        else:
+            j = i + 2
+        if j < n and text[j] == "'":
+            return j + 1
+        return None
+
+    def raw_follows(i: int) -> bool:
+        j = i + 1
+        while j < n and text[j] == "#":
+            j += 1
+        return j < n and text[j] == '"'
+
+    def scan_code(i: int, *, interpolating: bool) -> int:
+        brace = 0
+        while i < n:
+            if text.startswith("--", i):
+                j = text.find("\n", i)
+                mark(i, n if j < 0 else j)
+                i = n if j < 0 else j
+                continue
+            if text.startswith("/-", i):
+                i = scan_block(i)
+                continue
+            ch = text[i]
+            if ch == '"':
+                i = scan_string(i)
+                continue
+            if ch == "r" and _raw_token_start(text, i) and raw_follows(i):
+                i = scan_raw(i)
+                continue
+            if ch == "'":
+                nxt = skip_char_lit(i)
+                if nxt is not None:
+                    i = nxt
+                    continue
+            if interpolating and ch == "{":
+                brace += 1
+            elif interpolating and ch == "}":
+                if brace == 0:
+                    return i
+                brace -= 1
+            i += 1
+        return i
+
+    scan_code(0, interpolating=False)
     return mask
 
 
