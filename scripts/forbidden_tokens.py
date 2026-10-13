@@ -39,14 +39,17 @@ TOKEN_RE = re.compile(r"\b(native_decide|bv_decide)\b")
 # allowlist. The name may be namespaced/contain primes; we keep the simple
 # token as written at the declaration site.
 AXIOM_RE = re.compile(
-    r"^\s*(?:@\[[^\]]*\]\s*)?(?:protected\s+|private\s+|scoped\s+)*axiom\s+"
+    # Matched against the comment-blanked line, so `axiom/-c-/foo` is seen as
+    # `axiom     foo`. Include every modifier Lean accepts before `axiom`.
+    r"^\s*(?:@\[[^\]]*\]\s*)?"
+    r"(?:protected\s+|private\s+|scoped\s+|noncomputable\s+|unsafe\s+|partial\s+)*axiom\s+"
     r"([A-Za-z_][A-Za-z0-9_'.]*)"
 )
 DECL_RE = re.compile(
     # Keep leading indentation on one line: masked block comments can contain
     # thousands of whitespace-only lines, making ^\s* retry their whole suffix.
     r"^[ \t]*(?:@\[[^\]]*\]\s*)?"
-    r"(?:protected\s+|private\s+|scoped\s+|noncomputable\s+)*"
+    r"(?:protected\s+|private\s+|scoped\s+|noncomputable\s+|unsafe\s+|partial\s+)*"
     r"(axiom|theorem|lemma|def|abbrev|opaque|constant)\s+([A-Za-z_][A-Za-z0-9_'.]*)",
     re.MULTILINE,
 )
@@ -263,7 +266,7 @@ def find_true_placebos(text: str, mask: list[bool]) -> list[tuple[int, str]]:
             elif depth == 0 and ch == ":":
                 if i + 1 < scan_end and live[i + 1] == "=":
                     # Top-level `:=` — end of the signature, start of the proof.
-                    if stmt_colon != -1 and live[stmt_colon + 1:i].strip() == "True":
+                    if stmt_colon != -1 and strip_outer_parens(live[stmt_colon + 1:i]) == "True":
                         hits.append((live.count("\n", 0, m.start()) + 1, name))
                     break
                 if stmt_colon == -1:
@@ -323,7 +326,7 @@ def main() -> int:
                     f"explicit axiom/Prop, or remove the allowlist entry"
                 )
         pos = 0
-        for idx, line in enumerate(text.splitlines(True), start=1):
+        for idx, line in enumerate(live_text.splitlines(True), start=1):
             first_live = next((off for off, ch in enumerate(line) if not ch.isspace()), None)
             if first_live is None or mask[pos + first_live]:
                 pos += len(line)
