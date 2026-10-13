@@ -7,7 +7,9 @@ provided, scans only those Lean files/directories. Fails if live
   - `native_decide` / `bv_decide` (kernel-bypassing decision procedures), or
   - a custom `axiom` declaration whose name is not an allowlisted, documented
     residual (see scripts/residual_axioms.txt), or
-  - a `theorem`/`lemma` whose statement type is exactly `True` (a vacuous
+  - a `theorem`/`lemma` whose statement type is `True`, or any bracketing /
+    `∧` `∨` `→` `↔` combination built only from `True` (e.g. `(True)`,
+    `True ∧ (True)`), which is equally vacuous (a
     placebo that discharges no real obligation, e.g.
     `theorem foo_residual : True := by trivial`). This is the axiom-laundering
     pattern the #169/#171 audits removed: flipping `axiom … : True` into a
@@ -195,6 +197,17 @@ def strip_outer_parens(text: str) -> str:
     return result
 
 
+# Connectives allowed in a vacuous `True`-only statement. A formula whose only
+# atoms are `True` is a tautology under all of these, so it proves nothing.
+_TRUE_ONLY_RE = re.compile(r"(?:\s|[()]|True\b|∧|∨|→|↔|/\\|\\/|->|<->)+")
+
+
+def is_vacuous_true(stmt: str) -> bool:
+    """True if `stmt` is built only from `True`, parentheses and logical connectives."""
+    stmt = stmt.strip()
+    return "True" in stmt and _TRUE_ONLY_RE.fullmatch(stmt) is not None
+
+
 def top_level_result_type(header: str) -> str | None:
     """Return the text after the last top-level ':' in a declaration header."""
     depth_paren = depth_brace = depth_bracket = 0
@@ -266,7 +279,7 @@ def find_true_placebos(text: str, mask: list[bool]) -> list[tuple[int, str]]:
             elif depth == 0 and ch == ":":
                 if i + 1 < scan_end and live[i + 1] == "=":
                     # Top-level `:=` — end of the signature, start of the proof.
-                    if stmt_colon != -1 and strip_outer_parens(live[stmt_colon + 1:i]) == "True":
+                    if stmt_colon != -1 and is_vacuous_true(live[stmt_colon + 1:i]):
                         hits.append((live.count("\n", 0, m.start()) + 1, name))
                     break
                 if stmt_colon == -1:
@@ -318,7 +331,7 @@ def main() -> int:
             end = declaration_header_end(live_text, dm.end(), next_decl_start)
             header = live_text[dm.end():end]
             result_type = top_level_result_type(header)
-            if result_type == "True":
+            if result_type is not None and is_vacuous_true(result_type):
                 line = text.count("\n", 0, dm.start()) + 1
                 failures.append(
                     f"{path}:{line}: obligation-like name {name} is declared as "
