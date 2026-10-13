@@ -54044,3 +54044,58 @@ and `scripts/lake-locked.sh build Research.ProximityPrize.Frontier._MCAGoodRadiu
 The four printed declarations use only `propext`, `Classical.choice`, and
 `Quot.sound`. The initial tracked build passed 3502 jobs. Full repository and
 hosted gates must be reported separately.
+
+## [164-antipodal-subgroup-obstructions] 2026-10-13
+
+Hardyzyt. Exact arithmetic certificates; no new Lean theorem.
+
+[The probe](../../scripts/probes/probe_antipodal_subgroup_obstructions.py) checks two distinct
+obstructions in the actual sponsor fields from `_PrizeShapePrimeP30.lean` and
+`_PrizeShapePrimeP30Second.lean`. Their domain generators have order `n = 2^30`.
+It uses exact modular powers, polynomial products and coefficient comparisons.
+Primality and the canonical generators come from the existing Lean modules;
+this run does not repeat their kernel verification.
+
+**Unique square lift does not imply one coset.** The documentation of
+`AntipodalEvenOddDescent.isolated_root_determined` inferred single-coset confinement.
+For a generator `g`, an even `b`, and `b+2<n`, take
+
+```
+P(X) = X^(b+2) - g^2 X^b - ((g+1)X - g^2 - g).
+```
+
+Both `1` and `g` are roots. Their antipodes evaluate to `2(g+1)` and `2g(g+1)`,
+which are nonzero. Their `n/2` powers are `1` and `-1`, so they are isolated
+roots in opposite cosets of `mu_(n/2)`. The probe chooses `b = k = 2^29`.
+Thus the two head exponents are even, at least `k`, and below `n`, while the
+tail has degree one below `k`. This refutes the documented inference at the
+literal field, length and degree parameters. It does not refute the proved
+unique-lift identity or establish agreement at the production decoding radius.
+
+**Subgroup membership and no full subcoset do not repair the recorded count.**
+Set `t = g^(n/32)` and take the five lifts `t^i`, `0<=i<=4`. Split
+`Q(X) = product_i(X-t^i)` as `A(X^2)-X O(X^2)`. Both `A` and `O` have degree
+two. The probe checks the complete coefficient identity
+
+```
+A(U)^2 - U O(U)^2 = -product_i(U-t^(2i)).
+```
+
+The five roots lie in `mu_16`, hence in the actual `mu_(2^29)`, and `O` is
+nonzero at each root. There are no further roots. No two roots are antipodal.
+Every nontrivial subgroup of a cyclic group of order a power of two contains
+`-1`, so no full nontrivial subcoset is contained in this complete root set.
+Nevertheless its size is five, above the `k+1=4` cap of
+`IsoSparsityMasonStothers.IsolatedNonCosetCountResidual` at `k=3`.
+This supplies the subgroup and full-subcoset conditions missing from the
+unrestricted rational counterexamples in PRs #227 and #229.
+
+The second construction does not supply the original high-head/low-tail
+decoded-family realization or a production-rate counterexample. Its `k=3`
+is the recorded residual parameter, not the production code dimension.
+Those further restrictions need an explicit statement and a separate proof.
+The production threshold and the completion contract in #164 remain open.
+
+Reproduce with `python3 scripts/probes/probe_antipodal_subgroup_obstructions.py`.
+The output records both fields, the sparse-head witness, all five residual
+roots, their nonzero odd-part values, and the complete factorization coefficients.
