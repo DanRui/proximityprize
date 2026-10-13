@@ -43,6 +43,20 @@ class ForbiddenTokenBypasses(unittest.TestCase):
         self.assert_rejected("partial axiom fooP : 1 = 2\n",
                              "forbidden custom axiom declaration fooP")
 
+    def test_nonrec_axiom_is_rejected(self):
+        # Lean v4.30.0-rc2 accepts `nonrec axiom` and `#print axioms` lists it.
+        self.assert_rejected("nonrec axiom fooR : 1 = 2\n",
+                             "forbidden custom axiom declaration fooR")
+
+    def test_protected_axiom_in_namespace_is_rejected(self):
+        self.assert_rejected("namespace X\nprotected axiom fooQ : 1 = 2\nend X\n",
+                             "forbidden custom axiom declaration fooQ")
+
+    def test_docstring_attribute_and_modifiers_before_axiom_is_rejected(self):
+        self.assert_rejected(
+            "/-- d -/ @[simp] private noncomputable axiom fooS : 1 = 2\n",
+            "forbidden custom axiom declaration fooS")
+
     def test_comment_separator_after_axiom_is_rejected(self):
         self.assert_rejected("axiom/-c-/fooC : 1 = 2\n",
                              "forbidden custom axiom declaration fooC")

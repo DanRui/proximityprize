@@ -42,16 +42,18 @@ TOKEN_RE = re.compile(r"\b(native_decide|bv_decide)\b")
 # token as written at the declaration site.
 AXIOM_RE = re.compile(
     # Matched against the comment-blanked line, so `axiom/-c-/foo` is seen as
-    # `axiom     foo`. Include every modifier Lean accepts before `axiom`.
+    # `axiom     foo`. Include every modifier Lean (v4.30.0-rc2) accepts before
+    # `axiom`: private/protected, noncomputable, unsafe, partial and nonrec.
+    # (`scoped axiom` does not parse, so it is not listed.)
     r"^\s*(?:@\[[^\]]*\]\s*)?"
-    r"(?:protected\s+|private\s+|scoped\s+|noncomputable\s+|unsafe\s+|partial\s+)*axiom\s+"
+    r"(?:protected\s+|private\s+|noncomputable\s+|unsafe\s+|partial\s+|nonrec\s+)*axiom\s+"
     r"([A-Za-z_][A-Za-z0-9_'.]*)"
 )
 DECL_RE = re.compile(
     # Keep leading indentation on one line: masked block comments can contain
     # thousands of whitespace-only lines, making ^\s* retry their whole suffix.
     r"^[ \t]*(?:@\[[^\]]*\]\s*)?"
-    r"(?:protected\s+|private\s+|scoped\s+|noncomputable\s+|unsafe\s+|partial\s+)*"
+    r"(?:protected\s+|private\s+|scoped\s+|noncomputable\s+|unsafe\s+|partial\s+|nonrec\s+)*"
     r"(axiom|theorem|lemma|def|abbrev|opaque|constant)\s+([A-Za-z_][A-Za-z0-9_'.]*)",
     re.MULTILINE,
 )
@@ -70,7 +72,8 @@ ALLOWLIST_PATH = Path(__file__).resolve().parent / "residual_axioms.txt"
 # so it matches a real declaration, not an in-proof `have … : True`.
 PLACEBO_DECL_RE = re.compile(
     r"(?m)^[ \t]*(?:@\[[^\]]*\]\s*)*"
-    r"(?:noncomputable\s+|protected\s+|private\s+|scoped\s+|local\s+|partial\s+|unsafe\s+)*"
+    r"(?:noncomputable\s+|protected\s+|private\s+|scoped\s+|local\s+|partial\s+|unsafe\s+"
+    r"|nonrec\s+)*"
     r"(theorem|lemma)\s+([A-Za-z_][A-Za-z0-9_'.]*)"
 )
 
