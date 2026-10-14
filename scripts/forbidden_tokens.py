@@ -6,8 +6,9 @@ provided, scans only those Lean files/directories. Fails if live
 (non-comment) code contains:
   - `native_decide` / `bv_decide` (kernel-bypassing decision procedures), or
   - an `unsafe` declaration modifier, live `unsafeCast`, or `implemented_by`
-    attribute (kernel- or evaluator-bypassing constructs that can inhabit any
-    type while still looking axiom-clean to `#print axioms`), or
+    attribute (repository policy: block unsafe decls, unsafeCast, and
+    evaluator-diverging `implemented_by`; this is a fast precheck, not a claim
+    that Lean accepts unsafe theorems as axiom-clean proofs), or
   - a custom `axiom` declaration whose name is not an allowlisted, documented
     residual (see scripts/residual_axioms.txt), or
   - a `theorem`/`lemma` whose statement type is exactly `True` (a vacuous
@@ -39,12 +40,14 @@ from pathlib import Path
 
 TOKEN_RE = re.compile(r"\b(native_decide|bv_decide|unsafeCast|implemented_by)\b")
 # Lean declaration-modifier `unsafe` (not aesop's `(add unsafe …)` tactic hint).
-# Only flag when `unsafe` is immediately followed by a declaration keyword, so
+# Allow the same modifiers before or after `unsafe` (Lean accepts e.g.
+# `unsafe nonrec def`), then require a declaration keyword so
 # `aesop (add unsafe …)` and `attribute [aesop unsafe 50%]` stay allowed.
 UNSAFE_DECL_RE = re.compile(
     r"(?m)^[ \t]*(?:@\[[^\]]*\]\s*)*"
     r"(?:(?:public|protected|private|scoped|noncomputable|partial|nonrec|meta|local)\s+)*"
     r"unsafe\s+"
+    r"(?:(?:public|protected|private|scoped|noncomputable|partial|nonrec|meta|local)\s+)*"
     r"(?:theorem|lemma|def|abbrev|opaque|constant|axiom|instance|structure|inductive|class|example)\b"
 )
 # Capture the declared axiom name so it can be checked against the residual
@@ -309,8 +312,8 @@ def main() -> int:
             line = text.count("\n", 0, m.start()) + 1
             failures.append(
                 f"{path}:{line}: forbidden unsafe declaration "
-                f"(unsafe theorems/defs can inhabit any type via unsafeCast while "
-                f"still looking axiom-clean; prove in safe Lean or track a residual)"
+                f"(repository policy rejects live `unsafe` decls; prove in safe "
+                f"Lean or track a residual — this precheck is not a kernel-escape claim)"
             )
         decls = list(DECL_RE.finditer(live_text))
         for decl_index, dm in enumerate(decls):

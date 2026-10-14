@@ -1,13 +1,16 @@
 #!/usr/bin/env python3
-"""Regression tests for unsafe / unsafeCast / implemented_by laundering gates.
+"""Regression tests for unsafe / unsafeCast / implemented_by policy gates.
 
 CI gate 1 (`scripts/forbidden_tokens.py`) previously caught only native_decide,
 bv_decide, undocumented axioms, True placebos, and bodyless opaque/constant.
-An `unsafe theorem … := unsafeCast ()` can inhabit an arbitrary Prop while
-`#print axioms` still reports only the standard axioms — so a prize declaration
-could look axiom-clean after an unsafe laundering. The honesty-audit checklist
+This module pins a repository policy precheck that also rejects live `unsafe`
+declarations, `unsafeCast`, and `implemented_by`. That is independent of whether
+pinned Lean accepts a given fixture: Lean 4.30 rejects `unsafe theorem`, and a
+safe theorem cannot consume an unsafe def. The gate still matters as a fast
+policy check (including accepted forms like `unsafe nonrec def`) and against
+evaluator-diverging `implemented_by` wrappers. The honesty-audit checklist
 already required reviewers to look for `unsafe` / `implemented_by` by hand;
-these tests pin the automated gate that closes that gap.
+these tests pin the automated gate.
 
 Aesop's `(add unsafe …)` tactic hints and `attribute [aesop unsafe N%]` must
 remain allowed: they use the word "unsafe" but are not Lean declaration
@@ -66,6 +69,19 @@ class ForbiddenTokensUnsafeTests(unittest.TestCase):
         self.assert_rejected(
             "def impl : Nat := 0\n@[implemented_by impl]\ndef wrapped : Nat := 1\n",
             "implemented_by",
+        )
+
+    def test_unsafe_nonrec_def_is_rejected(self) -> None:
+        # Lean accepts modifiers between `unsafe` and the decl keyword.
+        self.assert_rejected(
+            "unsafe nonrec def helper : Nat := 0\n#check helper\n",
+            "unsafe",
+        )
+
+    def test_nonrec_unsafe_def_is_rejected(self) -> None:
+        self.assert_rejected(
+            "nonrec unsafe def helper : Nat := 0\n",
+            "unsafe",
         )
 
     def test_aesop_add_unsafe_hint_is_allowed(self) -> None:
