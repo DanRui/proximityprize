@@ -238,5 +238,87 @@ class ForbiddenTokenBypasses(unittest.TestCase):
                              "forbidden vacuous placebo `theorem/lemma b_residual")
 
 
+    # --- Lean lexing and Unicode identifiers (review of 2026-10-14). Every
+    # source below was compiled with Lean v4.30.0-rc2 and the stated
+    # `#print axioms` result checked. -----------------------------------------
+    def test_quoted_identifier_with_apostrophe_is_not_flagged(self):
+        # `#print axioms actual_equality`: no axioms.
+        self.assert_clean("def «an axiom counterfeit'» : Nat := 0\n"
+                          "theorem actual_equality : «an axiom counterfeit'» = 0 := rfl\n")
+
+    def test_quoted_identifiers_with_comment_and_quote_text_are_names(self):
+        # `«a -- b»` is one identifier, so the axiom after it is live.
+        self.assert_rejected("def «a -- b» : Nat := 0\naxiom afterq : False\n",
+                             "forbidden custom axiom declaration afterq")
+        self.assert_clean('def «x " y» : Nat := 0\ntheorem t : «x " y» = 0 := rfl\n')
+
+    def test_quoted_axiom_with_apostrophe_is_rejected(self):
+        # `#print axioms t` lists `x'`.
+        self.assert_rejected("axiom «x'» : False\ntheorem t : False := «x'»\n",
+                             "forbidden custom axiom declaration «x'»")
+
+    def test_axiom_inside_unicode_identifier_is_not_flagged(self):
+        # `αaxiom` is one identifier; `#print axioms actual_equality`: no axioms.
+        self.assert_clean("def αaxiom (_ : Type) : Nat := 0\n"
+                          "theorem actual_equality : αaxiom Nat = 0 := rfl\n")
+        self.assert_clean("def ωaxiomé : Nat := 0\ndef axiomα : Nat := 1\n")
+
+    def test_true_declared_under_unicode_namespace_is_not_a_placebo(self):
+        # `#check @α.t` prints `α.t : α.True → α.True`; no axioms.
+        self.assert_clean("def α.True : Prop := False\nnamespace α\n"
+                          "theorem t : True → True := fun h => h\nend α\n")
+        self.assert_clean("def «my ns».True : Prop := False\nnamespace «my ns»\n"
+                          "theorem t : True → True := fun h => h\nend «my ns»\n")
+
+    def test_unicode_axiom_names_are_rejected(self):
+        # Each compiles and `#print axioms` lists the axiom.
+        for name in ("αbad", "ébad", "𝔽bad", "x.αy", "ℕbad"):
+            with self.subTest(name=name):
+                self.assert_rejected(f"axiom {name} : False\ntheorem t : False := {name}\n",
+                                     f"forbidden custom axiom declaration {name}")
+
+    def test_axiom_directly_followed_by_guillemet_is_rejected(self):
+        # `axiom«qbad» : False` compiles; `#print axioms t` lists `qbad`.
+        self.assert_rejected("axiom«qbad» : False\ntheorem t : False := qbad\n",
+                             "forbidden custom axiom declaration «qbad»")
+
+    def test_unicode_and_quoted_placebos_are_rejected(self):
+        # Both compile with no axioms but prove only `True`.
+        self.assert_rejected("theorem αt : True := trivial\n",
+                             "forbidden vacuous placebo `theorem/lemma αt")
+        self.assert_rejected("theorem «quoted placebo» : True := trivial\n",
+                             "forbidden vacuous placebo `theorem/lemma «quoted placebo»")
+
+    def test_unicode_binder_does_not_rebind_true(self):
+        # `(αTrue : Prop)` binds `αTrue`, not `True`.
+        self.assert_rejected("theorem t (αTrue : Prop) : True := trivial\n",
+                             "forbidden vacuous placebo")
+
+    def test_comment_openers_inside_literals_do_not_hide_axioms(self):
+        # Each compiles and `#print axioms` lists the axiom.
+        for src in (
+            'def s1 : String := "/-"\naxiom strbad : False\ndef s2 : String := "-/"\n',
+            'def s1 : String := "--" axiom strbad : False\n',
+            'def s1 : String := r#"/-"#\naxiom strbad : False\ndef s2 : String := r#"-/"#\n',
+            'def s1 : String := "\\"/-"\naxiom strbad : False\ndef s2 : String := "-/"\n',
+            "def c1 : Char := '\"'\naxiom strbad : False\ndef s3 : String := \"\\\"-/\"\n",
+        ):
+            with self.subTest(src=src):
+                self.assert_rejected(src, "forbidden custom axiom declaration strbad")
+
+    def test_comment_inside_interpolation_hole_is_lexed_as_code(self):
+        # `s!"{"/-"}"` is one interpolated string; the axiom after it is live.
+        self.assert_rejected('def s : String := s!"{"/-"}"\naxiom interpbad : False\n',
+                             "forbidden custom axiom declaration interpbad")
+
+    def test_plain_or_interpolated_ambiguity_fails_closed(self):
+        # Lean reads this as three plain strings; an interpolated reading of
+        # the first would open a comment. The scan refuses to guess.
+        self.assert_rejected('def s : String := "{" ++ "/-" ++ "}"\n',
+                             "string literal reads differently")
+        # Balanced holes / braces without comment openers stay clean.
+        self.assert_clean('def s (n : Nat) : String := s!"n = {n}" ++ "{" ++ "}"\n')
+
+
 if __name__ == "__main__":
     unittest.main()
