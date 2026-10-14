@@ -3,7 +3,7 @@
 
 By default, scans every .lean file under ArkLib/ and Research/. If one or more paths are
 provided, scans only those Lean files/directories. Fails if live
-(non-comment) code contains:
+(non-comment) code contains (`axiom` text inside a string literal is data):
   - `native_decide` / `bv_decide` (kernel-bypassing decision procedures), or
   - a custom `axiom` declaration whose name is not an allowlisted, documented
     residual (see scripts/residual_axioms.txt), with any modifiers (including
@@ -12,8 +12,10 @@ provided, scans only those Lean files/directories. Fails if live
   - a `theorem`/`lemma` whose statement type is `True`, or any bracketing /
     `∧` `∨` `→` `↔` combination built only from `True` (e.g. `(True)`,
     `True ∧ (True)`), which is equally vacuous, unless `True` is rebound by a
-    binder, `variable` or a file-level `True` declaration (then it is a real
-    proposition, e.g. `theorem t (True : Prop) : True → True`) (a
+    binder, an in-scope `variable`, or a non-`protected` `True` declared in the
+    current namespace or a prefix of it (then it is a real proposition, e.g.
+    `theorem t (True : Prop) : True → True`); scopes follow
+    `namespace`/`section`/`mutual`/`end`, and anything else fails closed (a
     placebo that discharges no real obligation, e.g.
     `theorem foo_residual : True := by trivial`). This is the axiom-laundering
     pattern the #169/#171 audits removed: flipping `axiom … : True` into a
@@ -198,6 +200,9 @@ class LexResult:
         # String literals whose plain and interpolated readings end at different
         # offsets: Lean's choice depends on the parser context.
         self.ambiguous: list[int] = []
+        # Top-level string/char literal spans (interpolation holes included):
+        # their text is data, never a command such as `axiom`.
+        self.strings: list[tuple[int, int]] = []
 
 
 class _Lexer:
@@ -268,12 +273,20 @@ class _Lexer:
                     if ("{" in text[i:plain_end]
                             and _Lexer(text, record=False).string(i, True) != plain_end):
                         self.res.ambiguous.append(i)
-                i = self.string(i, interp)
+                j = self.string(i, interp)
+                if self.record and not nested:
+                    self.res.strings.append((i, j))
+                i = j
             elif c == "r" and self._token_start(i) and (m := _RAW_OPEN_RE.match(text, i)):
                 close = '"' + m.group(1)
                 j = text.find(close, m.end())
-                i = n if j == -1 else j + len(close)
+                j = n if j == -1 else j + len(close)
+                if self.record and not nested:
+                    self.res.strings.append((i, j))
+                i = j
             elif c == "'" and self._token_start(i) and (m := _CHAR_LIT_RE.match(text, i)):
+                if self.record and not nested:
+                    self.res.strings.append((i, m.end()))
                 i = m.end()
             elif c == "«":
                 j = text.find("»", i + 1)
@@ -318,9 +331,37 @@ def ambiguous_literals(text: str, res: LexResult) -> list[int]:
     bad = []
     for off in res.ambiguous:
         alt = lex_lean(text, frozenset({off}))
-        if alt.mask != res.mask or alt.quoted != res.quoted:
+        if (alt.mask != res.mask or alt.quoted != res.quoted
+                or command_view(text, alt) != command_view(text, res)):
             bad.append(off)
     return bad
+
+
+def code_text(text: str, res: LexResult) -> str:
+    """`text` with comments and string/char literals blanked (newlines kept).
+
+    Only this text can hold commands: `#eval IO.println "axiom foo"` declares
+    nothing, so `axiom` inside a literal is data, not a declaration.
+    """
+    blank = list(res.mask)
+    for a, b in res.strings:
+        for k in range(a, min(b, len(blank))):
+            blank[k] = True
+    return "".join(ch if (ch == "\n" or not blank[i]) else " " for i, ch in enumerate(text))
+
+
+def axiom_hits(code: str, res: LexResult) -> list[tuple[int, str]]:
+    """Live `axiom` declarations: offset and declared name."""
+    return [(m.start(), m.group(1)) for m in AXIOM_RE.finditer(code)
+            if not any(a < m.start() < b for a, b in res.quoted)]
+
+
+def command_view(text: str, res: LexResult) -> tuple:
+    """What the checks see under one lexing: axiom, declaration and placebo hits."""
+    code = code_text(text, res)
+    return (axiom_hits(code, res),
+            [(m.start(), m.group(1), m.group(2)) for m in DECL_RE.finditer(code)],
+            find_true_placebos(text, res))
 
 
 def comment_mask(text: str) -> list[bool]:
@@ -435,10 +476,6 @@ def declaration_header_end(live_text: str, start: int, next_decl_start: int | No
 # built-in constant; when resolution is uncertain it errs toward *not* flagging.
 _TRUE_TOKEN_RE = re.compile(_ID_START + r"(?:True|«True»)" + _ID_END)
 _BINDER_OPEN = {"(": ")", "{": "}", "[": "]", "⦃": "⦄", "⟨": "⟩"}
-_RENAMING_RE = re.compile(_ID_START + r"renaming" + _ID_END + r"[^\n]*(?:→|->)\s*(?:True|«True»)" + _ID_END)
-_NOTATION_TRUE_RE = re.compile(
-    _ID_START + r"(?:notation|infix|infixl|infixr|prefix|postfix|macro|syntax)" + _ID_END
-    + r"[^\n]*\"True\"")
 _VARIABLE_RE = re.compile(_ID_START + r"variable" + _ID_END)
 
 
@@ -484,53 +521,128 @@ def binder_names(segment: str) -> set[str]:
 
 _BINDER_CLOSE_ALL = {")", "}", "]", "⦄", "⟩"}
 _BINDER_TOKEN_RE = re.compile(_NAME)
-# A declaration whose last name component is `True`, under any (Unicode,
-# quoted or `_root_`) namespace prefix: `def True`, `def α.True`, `def «x».True`.
-_TRUE_DECL_RE = re.compile(
-    _ID_START + r"(?:def|abbrev|theorem|lemma|axiom|opaque|constant|structure"
-    r"|class|inductive|instance)" + _ID_END + r"\s*(?:" + _COMP + r"\.)*(?:True|«True»)"
-    r"(?![" + ID_REST + r".])"
+
+
+# --- `True` scope model -----------------------------------------------------
+# Lean resolves a bare `True` inside `namespace A.B` to `A.B.True`, then
+# `A.True`, then the builtin: only a non-`protected` `True` declared in the
+# current namespace or one of its prefixes shadows the builtin. A namespace's
+# declarations stop applying at its `end`, and a `variable` binder at the end
+# of its section/namespace. `open`/`export` of a namespace that declares `True`
+# makes a bare `True` ambiguous (Lean rejects it), so it never shadows here.
+# Anything the model cannot follow (unbalanced `end`, `True` introduced by
+# `renaming`/`notation`/`macro`) fails closed: `True` is taken as the builtin.
+_SCOPE_CMD_RE = re.compile(
+    r"(?m)^[ \t]*(?:@\[[^\]]*\]\s*)*"
+    r"(?:(?:public|private|noncomputable|meta)\s+)*"
+    r"(namespace|section|mutual|end)" + _ID_END + r"[ \t]*(" + _NAME + r")?"
+)
+_TRUE_DECL_SCOPED_RE = re.compile(
+    r"(?m)^[ \t]*(?:@\[[^\]]*\]\s*)*"
+    r"((?:(?:public|private|protected|noncomputable|unsafe|partial|nonrec|meta)\s+)*)"
+    r"(?:def|abbrev|theorem|lemma|axiom|opaque|constant|structure|class|inductive|instance)"
+    + _ID_END + r"\s*((?:" + _COMP + r"\.)*)(?:True|«True»)(?![" + ID_REST + r".])"
 )
 
 
-def file_rebinds_true(live: str) -> bool:
-    """Conservative: does anything in the file give `True` a non-builtin meaning?"""
-    if _RENAMING_RE.search(live) or _NOTATION_TRUE_RE.search(live):
-        return True
-    if _TRUE_DECL_RE.search(live):
-        return True
-    return False
+def _components(name: str) -> list[str]:
+    return [c for c in re.findall(_COMP, name)]
 
 
-def variables_rebinding_true(live: str) -> list[int]:
-    """Offsets of `variable` commands that bind the name `True`.
+class TrueScopes:
+    """Where, in one file, a bare `True` may not mean the builtin constant."""
 
-    The binder list runs from `variable` to the next line that starts a new
-    command at column 0 (or an ` in` that scopes it to one command). Section
-    scoping is not modelled: any such `variable` before a declaration is treated
-    as possibly in scope (errs toward not flagging).
-    """
-    offsets: list[int] = []
-    for m in _VARIABLE_RE.finditer(live):
-        end = m.end()
-        nxt = re.compile(r"\n(?=\S)|\bin\b").search(live, end)
-        seg = live[end: nxt.start() if nxt else len(live)]
-        if "True" in binder_names(seg):
-            offsets.append(m.start())
-    return offsets
+    def __init__(self, live: str):
+        events: list[tuple[int, str, object]] = []
+        for m in _SCOPE_CMD_RE.finditer(live):
+            events.append((m.start(), m.group(1), m.group(2) or ""))
+        for m in _TRUE_DECL_SCOPED_RE.finditer(live):
+            events.append((m.start(), "true-decl", (m.group(1), m.group(2))))
+        for m in _VARIABLE_RE.finditer(live):
+            end = m.end()
+            nxt = re.compile(r"\n(?=\S)|" + _ID_START + r"in" + _ID_END).search(live, end)
+            seg = live[end: nxt.start() if nxt else len(live)]
+            if "True" in binder_names(seg):
+                one_shot = bool(nxt and live.startswith("in", nxt.start()))
+                events.append((m.start(), "variable", nxt.end() if one_shot else None))
+        events.sort(key=lambda e: e[0])
+        self.ok = True
+        self._live = live
+        # (offset, namespace path, shadowing namespaces, variable scope ids alive)
+        self.timeline: list[tuple[int, tuple[str, ...], frozenset, frozenset]] = []
+        self.one_shot: list[int] = []  # `variable (True …) in`: next command only
+        stack: list[tuple[str, list[str], int]] = []  # (kind, components, id)
+        decls: set[tuple[str, ...]] = set()
+        var_scopes: set[int] = set()
+        next_id = 1
+
+        def path() -> tuple[str, ...]:
+            return tuple(c for kind, comps, _ in stack for c in comps)
+
+        def snap(off: int) -> None:
+            alive = {sid for _, _, sid in stack} | {0}
+            self.timeline.append((off, path(), frozenset(decls),
+                                  frozenset(var_scopes & alive)))
+
+        snap(0)
+        for off, kind, arg in events:
+            if kind in ("namespace", "section", "mutual"):
+                comps = _components(arg) if kind == "namespace" else []
+                if kind == "namespace" and not comps:
+                    self.ok = False
+                stack.append((kind, comps, next_id))
+                next_id += 1
+            elif kind == "end":
+                if not stack:
+                    self.ok = False
+                    continue
+                top_kind, comps, sid = stack.pop()
+                if top_kind == "namespace" and _components(arg) != comps:
+                    self.ok = False
+                var_scopes.discard(sid)
+            elif kind == "true-decl":
+                mods, prefix = arg
+                if re.search(r"(?<![" + ID_REST + r"])protected(?![" + ID_REST + r"])", mods):
+                    continue
+                comps = _components(prefix)
+                if comps[:1] == ["_root_"]:
+                    full = tuple(comps[1:])
+                else:
+                    full = path() + tuple(comps)
+                if full:  # a root `True` clashes with the builtin: Lean rejects it
+                    decls.add(full)
+            elif kind == "variable":
+                if arg is not None:
+                    self.one_shot.append(arg)
+                else:
+                    var_scopes.add(stack[-1][2] if stack else 0)
+            snap(off)
+
+    def shadowed_at(self, off: int) -> bool:
+        """Can a bare `True` at command offset `off` resolve to a non-builtin?"""
+        if not self.ok:
+            return False  # cannot follow the scopes: fail closed (builtin)
+        state = None
+        for t in self.timeline:
+            if t[0] <= off:
+                state = t
+            else:
+                break
+        _, cur, decls, vars_alive = state
+        if vars_alive:
+            return True
+        if any(cur[:len(d)] == d for d in decls):
+            return True
+        # `variable (True : Prop) in` covers only the command right after `in`.
+        return any(start <= off and not self._live[start:off].strip()
+                   for start in self.one_shot)
+
+def true_is_shadowed(binders: str, decl_start: int, scopes: TrueScopes) -> bool:
+    """True if `True` in this declaration's statement is not the builtin."""
+    return scopes.shadowed_at(decl_start) or "True" in binder_names(binders)
 
 
-def true_is_shadowed(binders: str, decl_start: int, file_rebind: bool,
-                     var_offsets: list[int]) -> bool:
-    """True if `True` in this declaration's statement may not be the builtin."""
-    if file_rebind:
-        return True
-    if any(off < decl_start for off in var_offsets):
-        return True
-    return "True" in binder_names(binders)
-
-
-def find_true_placebos(text: str, mask: list[bool]) -> list[tuple[int, str]]:
+def find_true_placebos(text: str, res: LexResult) -> list[tuple[int, str]]:
     """Find `theorem`/`lemma` declarations whose statement type is exactly `True`.
 
     Returns a list of `(line, name)`. Comment/docstring characters are blanked
@@ -542,12 +654,8 @@ def find_true_placebos(text: str, mask: list[bool]) -> list[tuple[int, str]]:
     by a binder, `variable` or file-level declaration (see `true_is_shadowed`). Stopping at `:=` keeps in-proof `have … : True := …`
     steps from being mistaken for the declaration's statement.
     """
-    live = "".join(
-        ch if (ch == "\n" or not masked) else " "
-        for ch, masked in zip(text, mask)
-    )
-    file_rebind = file_rebinds_true(live)
-    var_offsets = variables_rebinding_true(live)
+    live = code_text(text, res)
+    scopes = TrueScopes(live)
     decls = list(PLACEBO_DECL_RE.finditer(live))
     hits: list[tuple[int, str]] = []
     for idx, m in enumerate(decls):
@@ -568,7 +676,7 @@ def find_true_placebos(text: str, mask: list[bool]) -> list[tuple[int, str]]:
                     # Top-level `:=` — end of the signature, start of the proof.
                     if (stmt_colon != -1 and is_vacuous_true(live[stmt_colon + 1:i])
                             and not true_is_shadowed(live[m.end():stmt_colon], m.start(),
-                                                     file_rebind, var_offsets)):
+                                                     scopes)):
                         hits.append((live.count("\n", 0, m.start()) + 1, name))
                     break
                 if stmt_colon == -1:
@@ -598,16 +706,12 @@ def main() -> int:
                 f"interpolated string, which changes what is a comment; the scan cannot "
                 f"be trusted here, so rewrite the literal (e.g. escape `{{` as `\\{{`)"
             )
-        live_text = "".join(
-            ch if (ch == "\n" or not mask[i]) else " "
-            for i, ch in enumerate(text)
-        )
+        live_text = code_text(text, lexed)
         for m in TOKEN_RE.finditer(text):
             if not mask[m.start()]:
                 line = text.count("\n", 0, m.start()) + 1
                 failures.append(f"{path}:{line}: forbidden token {m.group(1)}")
-        file_rebind = file_rebinds_true(live_text)
-        var_offsets = variables_rebinding_true(live_text)
+        scopes = TrueScopes(live_text)
         decls = list(DECL_RE.finditer(live_text))
         for decl_index, dm in enumerate(decls):
             kind, name = dm.group(1), dm.group(2)
@@ -632,19 +736,15 @@ def main() -> int:
             result_type = top_level_result_type(header)
             if (result_type is not None and is_vacuous_true(result_type)
                     and not true_is_shadowed(header[:top_level_colon(header) or 0], dm.start(),
-                                             file_rebind, var_offsets)):
+                                             scopes)):
                 line = text.count("\n", 0, dm.start()) + 1
                 failures.append(
                     f"{path}:{line}: obligation-like name {name} is declared as "
                     f"a vacuous {kind} of type True; keep real residual debt as an "
                     f"explicit axiom/Prop, or remove the allowlist entry"
                 )
-        quoted = lexed.quoted
-        for am in AXIOM_RE.finditer(live_text):
-            if any(start < am.start() < end for start, end in quoted):
-                continue
-            idx = live_text.count("\n", 0, am.start()) + 1
-            name = am.group(1)
+        for am_start, name in axiom_hits(live_text, lexed):
+            idx = live_text.count("\n", 0, am_start) + 1
             if is_allowlisted(name, allowlist):
                 seen_allowed.add(simple_name(name))
                 allowed_hits.append(f"{path}:{idx}: allowed documented residual axiom {name}")
@@ -655,7 +755,7 @@ def main() -> int:
                     f"tracked residual)"
                 )
 
-        for line_no, name in find_true_placebos(text, mask):
+        for line_no, name in find_true_placebos(text, lexed):
             failures.append(
                 f"{path}:{line_no}: forbidden vacuous placebo "
                 f"`theorem/lemma {name} : True` proves nothing about the named "

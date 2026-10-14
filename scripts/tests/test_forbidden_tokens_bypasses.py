@@ -20,6 +20,9 @@ def run_precheck(source: str) -> subprocess.CompletedProcess:
                               capture_output=True, text=True)
 
 
+DECOY = 'namespace Decoy\ndef True : Prop := False\nend Decoy\n'
+
+
 class ForbiddenTokenBypasses(unittest.TestCase):
     def assert_rejected(self, source: str, needle: str):
         result = run_precheck(source)
@@ -318,6 +321,91 @@ class ForbiddenTokenBypasses(unittest.TestCase):
                              "string literal reads differently")
         # Balanced holes / braces without comment openers stay clean.
         self.assert_clean('def s (n : Nat) : String := s!"n = {n}" ++ "{" ++ "}"\n')
+
+    # --- dimx9173 review 5512265055. Every verdict below was checked with
+    # `lake env lean` on the same source (Lean 4.30.0-rc2).
+
+    def test_axiom_text_inside_string_literals_is_not_flagged(self):
+        # `#eval IO.println "axiom foo"` compiles and prints `axiom foo`.
+        self.assert_clean('#eval IO.println "axiom foo"\n')
+        self.assert_clean('def s1 : String := r#"axiom bar : False"#\n'
+                          'def s2 (n : Nat) : String := s!"axiom {n}"\n'
+                          'def s3 : String := "\\ntheorem fooResidual : True := trivial\\naxiom baz : False\\n"\n')
+        self.assert_clean('def s4 : String := "\ntheorem fooResidual : True := trivial\naxiom baz : False\n"\n')
+
+    def test_axiom_after_string_literals_is_still_rejected(self):
+        self.assert_rejected('def s : String := "x"\naxiom realbad : False\n',
+                             "forbidden custom axiom declaration realbad")
+        self.assert_rejected('def f (x : Nat) : String := "{" ++ toString x ++ "}"\naxiom hid : False\n',
+                             "forbidden custom axiom declaration hid")
+
+    def test_literal_whose_reading_decides_an_axiom_fails_closed(self):
+        # Plain: two strings and a live axiom. Interpolated: one string. The
+        # scan refuses to guess which one Lean picks.
+        self.assert_rejected('def s := f "{" axiom amb : False "}"\n',
+                             "string literal reads differently")
+
+    def test_true_declared_in_closed_namespace_does_not_hide_placebo(self):
+        # After `end Decoy`, `True` is the builtin (`#print axioms` is clean).
+        self.assert_rejected(DECOY + "theorem mcaPrizeResidual : True := trivial\n",
+                             "forbidden vacuous placebo `theorem/lemma mcaPrizeResidual : True`")
+        self.assert_rejected(DECOY + "def foo_residual : True := trivial\n",
+                             "obligation-like name foo_residual")
+
+    def test_open_or_export_of_true_does_not_hide_placebo(self):
+        # Lean rejects each of these with "Ambiguous term True".
+        for tail in ("open Decoy\n", "open Decoy in\n", "export Decoy (True)\n",
+                     "open Decoy (True)\n"):
+            with self.subTest(tail=tail):
+                self.assert_rejected(DECOY + tail + "theorem t : True → True := fun h => h\n",
+                                     "forbidden vacuous placebo")
+
+    def test_true_scope_follows_nested_namespaces(self):
+        # Inside `A`, `A.B.True` is not visible: `A.t : True → True` (builtin).
+        self.assert_rejected("namespace A\nnamespace B\ndef True : Prop := False\nend B\n"
+                             "theorem t : True → True := fun h => h\nend A\n",
+                             "forbidden vacuous placebo")
+        # Inside `A.B` it is: `A.B.t : A.B.True → A.B.True`.
+        self.assert_clean("namespace A\nnamespace B\ndef True : Prop := False\nend B\nend A\n"
+                          "namespace A.B\ntheorem t : True → True := fun h => h\nend A.B\n")
+        # `def _root_.D.True` inside `X` declares `D.True`.
+        self.assert_clean("namespace X\ndef _root_.D.True : Prop := False\nend X\n"
+                          "namespace D\ntheorem t : True → True := fun h => h\nend D\n")
+
+    def test_true_scope_follows_sections_and_mutual(self):
+        # A section inside `D` still sees `D.True`.
+        self.assert_clean("namespace D\ndef True : Prop := False\nnoncomputable section\n"
+                          "theorem t : True → True := fun h => h\nend\nend D\n")
+        # `mutual … end` does not close `D`; the placebo before it is builtin.
+        self.assert_rejected("mutual\ntheorem a : True := trivial\nend\n"
+                             "namespace D\ndef True : Prop := False\nend D\n",
+                             "forbidden vacuous placebo `theorem/lemma a : True`")
+        # A `variable (True : Prop)` ends with its section.
+        self.assert_rejected("section S\nvariable (True : Prop)\nend S\n"
+                             "theorem t : True := trivial\n", "forbidden vacuous placebo")
+        # An `open` inside a closed section stops applying at `end`.
+        self.assert_rejected(DECOY + "section\nopen Decoy\nend\ntheorem t : True := trivial\n",
+                             "forbidden vacuous placebo")
+
+    def test_protected_hidden_or_renamed_true_does_not_shadow(self):
+        self.assert_rejected("namespace D\nprotected def True : Prop := False\n"
+                             "theorem t : True := trivial\nend D\n", "forbidden vacuous placebo")
+        self.assert_rejected(DECOY + "open Decoy hiding True\ntheorem t : True := trivial\n",
+                             "forbidden vacuous placebo")
+        self.assert_rejected(DECOY + "open Decoy renaming True → T\ntheorem t : True := trivial\n",
+                             "forbidden vacuous placebo")
+        # `private def True` in `D` still shadows inside `D`: `D.True → D.True`.
+        self.assert_clean("namespace D\nprivate def True : Prop := False\n"
+                          "theorem t : True → True := fun h => h\nend D\n")
+
+    def test_variable_in_covers_only_next_command(self):
+        self.assert_rejected("variable (True : Prop) in\ntheorem t : True → True := fun h => h\n"
+                             "theorem u : True := trivial\n",
+                             "forbidden vacuous placebo `theorem/lemma u : True`")
+
+    def test_unbalanced_scopes_fail_closed(self):
+        self.assert_rejected("namespace D\ndef True : Prop := False\nend E\n"
+                             "theorem t : True := trivial\n", "forbidden vacuous placebo")
 
 
 if __name__ == "__main__":
