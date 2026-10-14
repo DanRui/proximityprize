@@ -1,4 +1,5 @@
 """Sorry/admit census must not treat string text as comments or as holes."""
+import json
 import subprocess
 import sys
 from pathlib import Path
@@ -196,20 +197,84 @@ class SorryCensusBanglessInterpolation(unittest.TestCase):
         self.assertEqual(kinds('def t := r"{sorry}"\n'), [("sorry", "doc", "def t")])
 
     def test_cli_fail_on_holes_rejects_fixture(self):
-        script = Path(__file__).resolve().parents[1] / "sorry_census.py"
-        with tempfile.TemporaryDirectory() as directory:
-            root = Path(directory)
-            (root / "ArkLib").mkdir()
-            (root / "Research").mkdir()
-            (root / "ArkLib" / "Probe.lean").write_text(FIXTURE)
-            out = root / "census.json"
-            proc = subprocess.run(
-                [sys.executable, str(script), "--root", str(root), "--fail-on-holes",
-                 "--baseline", str(root / "none.json"), "--out", str(out)],
-                capture_output=True, text=True)
-            self.assertNotEqual(proc.returncode, 0, proc.stdout + proc.stderr)
-            import json
-            self.assertEqual(json.loads(out.read_text())["summary"]["holes"], 1)
+        self.assertEqual(cli_holes(FIXTURE), (1, True))
+
+
+def probe(splice: str) -> str:
+    return (
+        "theorem prizeAuditProbe : 1 = 1 := by\n"
+        f"  let _ : Nat := dbg_trace \"{splice}\"; 0\n"
+        "  rfl\n"
+        "#print axioms prizeAuditProbe\n"
+    )
+
+
+def cli_holes(source: str) -> tuple[int, bool]:
+    """(holes, gate failed) from the real CLI on a temp root holding `source`."""
+    script = Path(__file__).resolve().parents[1] / "sorry_census.py"
+    with tempfile.TemporaryDirectory() as directory:
+        root = Path(directory)
+        (root / "ArkLib").mkdir()
+        folder = root / "Research" / "ProximityPrize" / "Frontier"
+        folder.mkdir(parents=True)
+        (folder / "Probe.lean").write_text(source)
+        out = root / "census.json"
+        proc = subprocess.run(
+            [sys.executable, str(script), "--root", str(root), "--fail-on-holes",
+             "--baseline", str(root / "missing-baseline.json"), "--out", str(out)],
+            capture_output=True, text=True)
+        return json.loads(out.read_text())["summary"]["holes"], proc.returncode != 0
+
+
+# Reviewer fixtures (both compile with sorryAx on Lean v4.30.0-rc2).
+REVIEW_COMMENT_BRACE = probe("{/- } -/ (sorry : Nat)}")
+REVIEW_NESTED_STRING = probe('{let _ := "x"; (sorry : Nat)}')
+
+# Extra adversarial splice contents: each hides a `}` or `"` from naive scans.
+ADVERSARIAL_SPLICES = {
+    "nested_interpolated_string": '{let _ := s!"{"}"}"; (sorry : Nat)}',
+    "nested_bangless_string_with_brace": '{let _ := "}"; (sorry : Nat)}',
+    "char_literal_close_brace": "{let _ := '}'; (sorry : Nat)}",
+    "char_literal_quote": "{let _ := '\"'; (sorry : Nat)}",
+    "line_comment_with_brace": "{-- } \"\n  (sorry : Nat)}",
+    "raw_string_with_brace_and_quote": '{let _ := r#"}"\"#; (sorry : Nat)}',
+    "nested_block_comment": "{/- /- } -/ } -/ (sorry : Nat)}",
+    "nested_braces": "{({ val := (sorry : Nat), property := trivial } : Subtype fun (_ : Nat) => True).1}",
+}
+
+
+class SorryCensusSpliceParsing(unittest.TestCase):
+    def test_reviewer_fixtures_are_holes(self):
+        for source in (REVIEW_COMMENT_BRACE, REVIEW_NESTED_STRING):
+            with self.subTest(source=source):
+                self.assertEqual(kinds(source), [("sorry", "hole", "theorem prizeAuditProbe")])
+                self.assertEqual(cli_holes(source), (1, True))
+
+    def test_adversarial_splices_are_holes(self):
+        for name, splice in ADVERSARIAL_SPLICES.items():
+            with self.subTest(name=name):
+                source = probe(splice)
+                self.assertEqual(kinds(source), [("sorry", "hole", "theorem prizeAuditProbe")])
+                self.assertEqual(cli_holes(source), (1, True))
+
+    def test_comment_and_literal_text_inside_splice_stay_doc(self):
+        # Comments inside a splice are masked under both readings. (A word in a
+        # nested string literal inside a bang-less splice is a hole under the
+        # plain reading, a deliberate fail-safe false positive.)
+        source = probe("{/- sorry -/ let _ := 0; -- admit\n  0}")
+        self.assertEqual(
+            [(t, k) for t, k, _ in kinds(source)], [("sorry", "doc"), ("admit", "doc")])
+        self.assertEqual(cli_holes(source), (0, False))
+
+    def test_unbalanced_brace_in_plain_string_cannot_hide_later_sorry(self):
+        source = 'def s := "{" ++ "x"\ntheorem t : True := sorry\n'
+        self.assertIn(("sorry", "hole", "theorem t"), kinds(source))
+        source = 'def s := "a } b \\" c"\ntheorem t : True := sorry\n'
+        self.assertIn(("sorry", "hole", "theorem t"), kinds(source))
+
+    def test_bang_control_matches_bangless(self):
+        source = 'def t := s!"{/- } -/ (sorry : Nat)}"\n'
+        self.assertEqual(kinds(source), [("sorry", "hole", "def t")])
 
 
 if __name__ == "__main__":

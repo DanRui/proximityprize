@@ -13,18 +13,18 @@ Usage:
 A token is classified as:
   hole — `sorry`/`admit` in live code (a tactic body or term position),
          including code spliced into an interpolated string (`s!"{sorry}"`)
-         or inside `{...}` of ANY ordinary `"..."` string (see below)
+         or inside a `{...}` splice of ANY non-raw `"..."` string (see below)
   doc  — inside a docstring `/-- ... -/`, block comment `/- ... -/`,
          line comment `-- ...`, raw-string literal, or the literal
-         (non-`{...}`) text of a string (includes prose words containing 'admit')
+         (non-splice) text of a string (includes prose words containing 'admit')
 
-Why every `{...}` counts: many Lean 4.30 built-ins parse a bare string with
+Why every splice counts: many Lean 4.30 built-ins parse a bare string with
 `interpolatedStr(term)` and no `!` prefix (`dbg_trace "{x}"`, `throwError`,
 `throwErrorAt`, `throwNamedError[At]`, `logNamedError[At]`,
 `logNamedWarning[At]`, `trace[cls]`, `trace_goal[cls]`, `Macro.trace[cls]`),
 and any project `syntax ... interpolatedStr(term)` can add more. Tracking
-consumers is fragile, so the scanner errs toward reporting a hole: a
-`sorry`/`admit` between braces in a non-raw string is live. A plain string
+consumers is fragile, so the file is parsed both ways with the same
+recursive scanner and a token live in either parse is a hole. A plain string
 like `"{sorry}"` is therefore a (rare, harmless) false positive.
 The containing declaration is the nearest preceding `theorem|lemma|def|
 instance|example|abbrev|opaque` header.
@@ -116,14 +116,13 @@ def _interpolated_quote(text: str, quote: int) -> bool:
     return _ident_char(text[j - 1])
 
 
-def strip_comments_map(text: str) -> list[bool]:
-    """Return per-char mask: True if the char is not live code.
+def _scan_mask(text: str, *, all_interpolated: bool) -> list[bool]:
+    """One scan pass; see `strip_comments_map` for how two passes combine.
 
     Comments and docstrings are masked, and so is literal text of `"..."`,
     raw `r#*"..."#*` strings, and the literal chunks of interpolated strings.
-    Code inside `prefix! "{...}"` stays live, so `s!"{sorry}"` is still a hole,
-    and `{...}` text in any other non-raw string is left live too (fail-safe for
-    bang-less interpolatedStr consumers such as `dbg_trace "{sorry}"`).
+    Code inside interpolated `"{...}"` stays live, so `s!"{sorry}"` is a hole.
+    With `all_interpolated`, every non-raw string is treated as interpolated.
     Masking literals stops `--` / `/-` inside a string from swallowing a later
     `sorry`, which the comment-only scan reported as a docstring mention.
     """
@@ -182,34 +181,8 @@ def strip_comments_map(text: str) -> list[bool]:
                 return j
         return j
 
-    def unmask_splices(start: int, stop: int) -> None:
-        # Fail-safe for strings without a `prefix!`: they may still be
-        # interpolated (`dbg_trace "{sorry}"`, `throwError "{sorry}"`), so the
-        # text inside balanced-or-not `{...}` stays live. String extent is not
-        # changed, so this can only add holes, never hide one.
-        depth = 0
-        k = start
-        while k < stop:
-            if text[k] == "\\" and k + 1 < stop:
-                k += 2
-                continue
-            if text[k] == "{":
-                depth += 1
-            elif text[k] == "}" and depth > 0:
-                depth -= 1
-            elif depth > 0:
-                mask[k] = False
-            k += 1
-
     def scan_string(i: int) -> int:
-        start = i
-        end = scan_string_body(i)
-        if not _interpolated_quote(text, start):
-            unmask_splices(start + 1, end)
-        return end
-
-    def scan_string_body(i: int) -> int:
-        interpolated = _interpolated_quote(text, i)
+        interpolated = all_interpolated or _interpolated_quote(text, i)
         mask[i] = True
         i += 1
         while i < n:
@@ -297,6 +270,28 @@ def strip_comments_map(text: str) -> list[bool]:
 
     scan_code(0, interpolating=False)
     return mask
+
+
+def strip_comments_map(text: str) -> list[bool]:
+    """Return per-char mask: True if the char is not live code in EITHER reading.
+
+    Lean v4.30.0-rc2 has many `interpolatedStr(term)` consumers without a `!`
+    prefix (`dbg_trace`, `throwError[At]`, `throwNamedError[At]`,
+    `logNamedError[At]`, `logNamedWarning[At]`, `trace[..]`, `trace_goal[..]`,
+    `Macro.trace[..]`), and projects can declare more, so a bare `"..."` may or
+    may not be interpolated. Rather than guess, the file is scanned twice with
+    the same recursive scanner:
+      * plain:        only `prefix! "..."` strings are interpolated;
+      * interpolated: every non-raw `"..."` is interpolated, so each `{...}`
+                      splice is parsed as code (comments, nested strings, char
+                      literals, raw strings, nested interpolation).
+    Each pass is a self-consistent parse. A char is masked only if both passes
+    mask it, so a `sorry` live under either reading is a hole. The cost is a
+    rare false positive such as a plain `"{sorry}"` string.
+    """
+    plain = _scan_mask(text, all_interpolated=False)
+    interp = _scan_mask(text, all_interpolated=True)
+    return [x and y for x, y in zip(plain, interp)]
 
 
 def census(root: Path) -> list[dict]:
