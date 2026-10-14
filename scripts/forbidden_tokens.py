@@ -58,6 +58,13 @@ _NAME = r"(?:[A-Za-z_][A-Za-z0-9_'!?]*|«[^»\n]*»)(?:\.(?:[A-Za-z_][A-Za-z0-9_
 # blanked comments: `axiom\n  foo`, `axiom/- c -/foo` and
 # `axiom/- c\n-/foo` are all seen.
 AXIOM_RE = re.compile(r"(?<![A-Za-z0-9_'.!?«])axiom\s+(" + _NAME + r")")
+# Text inside a guillemet-quoted identifier (`«an axiom counterfeit»`) is part
+# of a name, not a command, so an `axiom` match that starts inside one is not a
+# declaration. Only spans with no newline, `"` or `'` are trusted as quoted
+# identifiers: a `«` inside a string or char literal (`"«"`, `'«'`) can only
+# reach a `»` outside that literal by crossing its closing quote, so such a
+# span is never exempted and cannot hide a real `axiom` command.
+QUOTED_IDENT_RE = re.compile(r"«[^»\n\"']*»")
 DECL_RE = re.compile(
     # Keep leading indentation on one line: masked block comments can contain
     # thousands of whitespace-only lines, making ^\s* retry their whole suffix.
@@ -464,7 +471,10 @@ def main() -> int:
                     f"a vacuous {kind} of type True; keep real residual debt as an "
                     f"explicit axiom/Prop, or remove the allowlist entry"
                 )
+        quoted = [(q.start(), q.end()) for q in QUOTED_IDENT_RE.finditer(live_text)]
         for am in AXIOM_RE.finditer(live_text):
+            if any(start < am.start() < end for start, end in quoted):
+                continue
             idx = live_text.count("\n", 0, am.start()) + 1
             name = am.group(1)
             if is_allowlisted(name, allowlist):

@@ -118,6 +118,32 @@ class ForbiddenTokenBypasses(unittest.TestCase):
         self.assert_rejected("axiom «weird name» : False\n",
                              "forbidden custom axiom declaration «weird name»")
 
+    def test_axiom_text_inside_quoted_identifier_is_not_flagged(self):
+        # Compiles with Lean v4.30.0-rc2; `#print axioms actual_equality` is empty.
+        result = run_precheck("def «an axiom counterfeit» : Nat := 0\n"
+                              "theorem actual_equality : «an axiom counterfeit» = 0 := rfl\n"
+                              "#print axioms actual_equality\n")
+        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+
+    def test_quoted_axiom_containing_axiom_text_is_rejected(self):
+        result = run_precheck("axiom «an axiom counterfeit» : False\n")
+        self.assertEqual(result.returncode, 1, result.stdout + result.stderr)
+        self.assertIn("forbidden custom axiom declaration «an axiom counterfeit»", result.stderr)
+        self.assertEqual(result.stderr.count("forbidden custom axiom declaration"), 1,
+                         result.stderr)
+
+    def test_guillemets_in_literals_do_not_hide_axioms(self):
+        # A `«` in a string or char literal is not an identifier start, so the
+        # text up to a later `»` must still be scanned.
+        for src in (
+            'def s := "«"\naxiom unprovedG : False\ndef t := "»"\n',
+            'def s := "«" axiom unprovedG : False def t := "»"\n',
+            "def c := '«' axiom unprovedG : False def d := '»'\n",
+            'def s := s!"{"«"}" axiom unprovedG : False def t := "»"\n',
+        ):
+            with self.subTest(src=src):
+                self.assert_rejected(src, "forbidden custom axiom declaration unprovedG")
+
     def test_split_axiom_reports_keyword_line(self):
         result = run_precheck("theorem ok : 1 = 1 := rfl\naxiom\n  unprovedN : False\n")
         self.assertEqual(result.returncode, 1, result.stdout + result.stderr)
