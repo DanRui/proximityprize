@@ -350,17 +350,23 @@ def code_text(text: str, res: LexResult) -> str:
     return "".join(ch if (ch == "\n" or not blank[i]) else " " for i, ch in enumerate(text))
 
 
+def outside_quoted(offset: int, quoted: list[tuple[int, int]]) -> bool:
+    """Command heads cannot start inside a guillemet identifier."""
+    return not any(a <= offset < b for a, b in quoted)
+
+
 def axiom_hits(code: str, res: LexResult) -> list[tuple[int, str]]:
     """Live `axiom` declarations: offset and declared name."""
     return [(m.start(), m.group(1)) for m in AXIOM_RE.finditer(code)
-            if not any(a < m.start() < b for a, b in res.quoted)]
+            if outside_quoted(m.start(), res.quoted)]
 
 
 def command_view(text: str, res: LexResult) -> tuple:
     """What the checks see under one lexing: axiom, declaration and placebo hits."""
     code = code_text(text, res)
     return (axiom_hits(code, res),
-            [(m.start(), m.group(1), m.group(2)) for m in DECL_RE.finditer(code)],
+            [(m.start(), m.group(1), m.group(2)) for m in DECL_RE.finditer(code)
+             if outside_quoted(m.start(), res.quoted)],
             find_true_placebos(text, res))
 
 
@@ -552,13 +558,20 @@ def _components(name: str) -> list[str]:
 class TrueScopes:
     """Where, in one file, a bare `True` may not mean the builtin constant."""
 
-    def __init__(self, live: str):
+    def __init__(self, live: str, quoted: list[tuple[int, int]] | None = None):
+        quoted = quoted or []
         events: list[tuple[int, str, object]] = []
         for m in _SCOPE_CMD_RE.finditer(live):
+            if not outside_quoted(m.start(), quoted):
+                continue
             events.append((m.start(), m.group(1), m.group(2) or ""))
         for m in _TRUE_DECL_SCOPED_RE.finditer(live):
+            if not outside_quoted(m.start(), quoted):
+                continue
             events.append((m.start(), "true-decl", (m.group(1), m.group(2))))
         for m in _VARIABLE_RE.finditer(live):
+            if not outside_quoted(m.start(), quoted):
+                continue
             end = m.end()
             nxt = re.compile(r"\n(?=\S)|" + _ID_START + r"in" + _ID_END).search(live, end)
             seg = live[end: nxt.start() if nxt else len(live)]
@@ -655,8 +668,9 @@ def find_true_placebos(text: str, res: LexResult) -> list[tuple[int, str]]:
     steps from being mistaken for the declaration's statement.
     """
     live = code_text(text, res)
-    scopes = TrueScopes(live)
-    decls = list(PLACEBO_DECL_RE.finditer(live))
+    scopes = TrueScopes(live, res.quoted)
+    decls = [m for m in PLACEBO_DECL_RE.finditer(live)
+             if outside_quoted(m.start(), res.quoted)]
     hits: list[tuple[int, str]] = []
     for idx, m in enumerate(decls):
         name = m.group(2)
@@ -711,8 +725,9 @@ def main() -> int:
             if not mask[m.start()]:
                 line = text.count("\n", 0, m.start()) + 1
                 failures.append(f"{path}:{line}: forbidden token {m.group(1)}")
-        scopes = TrueScopes(live_text)
-        decls = list(DECL_RE.finditer(live_text))
+        scopes = TrueScopes(live_text, lexed.quoted)
+        decls = [m for m in DECL_RE.finditer(live_text)
+                 if outside_quoted(m.start(), lexed.quoted)]
         for decl_index, dm in enumerate(decls):
             kind, name = dm.group(1), dm.group(2)
             next_decl_start = decls[decl_index + 1].start() if decl_index + 1 < len(decls) else None
