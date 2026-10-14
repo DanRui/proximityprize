@@ -5,6 +5,9 @@ By default, scans every .lean file under ArkLib/ and Research/. If one or more p
 provided, scans only those Lean files/directories. Fails if live
 (non-comment) code contains:
   - `native_decide` / `bv_decide` (kernel-bypassing decision procedures), or
+  - an `unsafe` declaration modifier, live `unsafeCast`, or `implemented_by`
+    attribute (kernel- or evaluator-bypassing constructs that can inhabit any
+    type while still looking axiom-clean to `#print axioms`), or
   - a custom `axiom` declaration whose name is not an allowlisted, documented
     residual (see scripts/residual_axioms.txt), or
   - a `theorem`/`lemma` whose statement type is exactly `True` (a vacuous
@@ -34,7 +37,16 @@ import re
 import sys
 from pathlib import Path
 
-TOKEN_RE = re.compile(r"\b(native_decide|bv_decide)\b")
+TOKEN_RE = re.compile(r"\b(native_decide|bv_decide|unsafeCast|implemented_by)\b")
+# Lean declaration-modifier `unsafe` (not aesop's `(add unsafe …)` tactic hint).
+# Only flag when `unsafe` is immediately followed by a declaration keyword, so
+# `aesop (add unsafe …)` and `attribute [aesop unsafe 50%]` stay allowed.
+UNSAFE_DECL_RE = re.compile(
+    r"(?m)^[ \t]*(?:@\[[^\]]*\]\s*)*"
+    r"(?:(?:public|protected|private|scoped|noncomputable|partial|nonrec|meta|local)\s+)*"
+    r"unsafe\s+"
+    r"(?:theorem|lemma|def|abbrev|opaque|constant|axiom|instance|structure|inductive|class|example)\b"
+)
 # Capture the declared axiom name so it can be checked against the residual
 # allowlist. The name may be namespaced/contain primes; we keep the simple
 # token as written at the declaration site.
@@ -293,6 +305,13 @@ def main() -> int:
             if not mask[m.start()]:
                 line = text.count("\n", 0, m.start()) + 1
                 failures.append(f"{path}:{line}: forbidden token {m.group(1)}")
+        for m in UNSAFE_DECL_RE.finditer(live_text):
+            line = text.count("\n", 0, m.start()) + 1
+            failures.append(
+                f"{path}:{line}: forbidden unsafe declaration "
+                f"(unsafe theorems/defs can inhabit any type via unsafeCast while "
+                f"still looking axiom-clean; prove in safe Lean or track a residual)"
+            )
         decls = list(DECL_RE.finditer(live_text))
         for decl_index, dm in enumerate(decls):
             kind, name = dm.group(1), dm.group(2)
@@ -366,6 +385,7 @@ def main() -> int:
         print("\n".join(allowed_hits))
     print(
         "forbidden-token precheck: clean (no native_decide / bv_decide / "
+        "unsafe declaration / unsafeCast / implemented_by / "
         "undocumented custom axiom / vacuous `: True` placebo; "
         f"{len(allowed_hits)} allowlisted residual axiom(s))"
     )

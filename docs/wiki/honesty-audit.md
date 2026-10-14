@@ -7,8 +7,9 @@ a "PROVEN" issue comment, or a grant-completion claim.
 ## What the gates already catch
 
 `./scripts/validate.sh` catches: `sorry`/`admit` holes (`sorry_census.py`), forbidden tokens
-(`native_decide`, `bv_decide`, undocumented `axiom` — `forbidden_tokens.py`), flagship-theorem
-axiom drift (`axiom_audit.py`). An auditor's job is everything those *cannot* see.
+(`native_decide`, `bv_decide`, `unsafe` declarations, `unsafeCast`, `implemented_by`,
+undocumented `axiom` — `forbidden_tokens.py`), flagship-theorem axiom drift
+(`axiom_audit.py`). An auditor's job is everything those *cannot* see.
 
 ## Current shortcut snapshot (2026-06-11)
 
@@ -103,5 +104,5 @@ front door without a proof of the predicate.
 - [ ] Full hypothesis list read; every nontrivial hypothesis is a *named*, tracked residual.
 - [ ] Non-vacuity: a satisfiable nontrivial parameter regime exists (or the vacuity is flagged).
 - [ ] Fresh focused rebuild + `#print axioms` shows exactly `[propext, Classical.choice, Quot.sound]`.
-- [ ] No new `axiom`, `native_decide`, `unsafe`, `implemented_by` in the diff.
+- [ ] No new `axiom`, `native_decide`, `unsafe`, `unsafeCast`, `implemented_by` in the diff (CI gate 1 now rejects the last three in live source; still re-check the diff).
 - [ ] Issue comment matches what was actually proven (regime, budget, verifier variant).
