@@ -1,4 +1,5 @@
 """Sorry/admit census must not treat string text as comments or as holes."""
+import subprocess
 import sys
 from pathlib import Path
 import tempfile
@@ -144,6 +145,71 @@ class SorryCensusStrings(unittest.TestCase):
     def test_comment_inside_interpolation_can_contain_a_brace(self):
         source = 'theorem t : String := s!"{/- } -/ sorry}"\n'
         self.assertEqual(kinds(source), [("sorry", "hole", "theorem t")])
+
+
+FIXTURE = (
+    "theorem prizeAuditProbe : 1 = 1 := by\n"
+    "  let _ : Nat := dbg_trace \"{(sorry : Nat)}\"; 0\n"
+    "  rfl\n"
+    "#print axioms prizeAuditProbe\n"
+)
+
+# Bang-less interpolatedStr(term) consumers in Lean v4.30.0-rc2
+# (src/Lean/Parser/Term.lean, Parser/Do.lean, Exception.lean, Util/Trace.lean,
+# Meta/Tactic/Grind/Types.lean, Init/MacroTrace.lean).
+NON_BANG_CONSUMERS = [
+    'dbg_trace "{sorry}"; 0',
+    'throwError "{sorry}"',
+    'throwErrorAt stx "{sorry}"',
+    'throwNamedError lean.foo "{sorry}"',
+    'throwNamedErrorAt stx lean.foo "{sorry}"',
+    'logNamedError lean.foo "{sorry}"',
+    'logNamedErrorAt stx lean.foo "{sorry}"',
+    'logNamedWarning lean.foo "{sorry}"',
+    'logNamedWarningAt stx lean.foo "{sorry}"',
+    'trace[Meta.debug] "{sorry}"',
+    'trace_goal[grind] "{sorry}"',
+    'Macro.trace[Meta.debug] "{sorry}"',
+]
+
+
+class SorryCensusBanglessInterpolation(unittest.TestCase):
+    def test_reviewer_fixture_is_a_hole(self):
+        self.assertEqual(kinds(FIXTURE), [("sorry", "hole", "theorem prizeAuditProbe")])
+
+    def test_every_bangless_consumer_keeps_splice_live(self):
+        for call in NON_BANG_CONSUMERS:
+            with self.subTest(call=call):
+                self.assertEqual(
+                    kinds(f"def t := do\n  {call}\n"), [("sorry", "hole", "def t")])
+
+    def test_admit_in_bangless_splice_is_a_hole(self):
+        self.assertEqual(
+            kinds('def t := throwError "x {admit} y"\n'), [("admit", "hole", "def t")])
+
+    def test_literal_text_outside_braces_stays_doc(self):
+        self.assertEqual(
+            kinds('def t := throwError "sorry {x} admit"\n'),
+            [("sorry", "doc", "def t"), ("admit", "doc", "def t")])
+
+    def test_raw_string_braces_stay_doc(self):
+        self.assertEqual(kinds('def t := r"{sorry}"\n'), [("sorry", "doc", "def t")])
+
+    def test_cli_fail_on_holes_rejects_fixture(self):
+        script = Path(__file__).resolve().parents[1] / "sorry_census.py"
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            (root / "ArkLib").mkdir()
+            (root / "Research").mkdir()
+            (root / "ArkLib" / "Probe.lean").write_text(FIXTURE)
+            out = root / "census.json"
+            proc = subprocess.run(
+                [sys.executable, str(script), "--root", str(root), "--fail-on-holes",
+                 "--baseline", str(root / "none.json"), "--out", str(out)],
+                capture_output=True, text=True)
+            self.assertNotEqual(proc.returncode, 0, proc.stdout + proc.stderr)
+            import json
+            self.assertEqual(json.loads(out.read_text())["summary"]["holes"], 1)
 
 
 if __name__ == "__main__":
