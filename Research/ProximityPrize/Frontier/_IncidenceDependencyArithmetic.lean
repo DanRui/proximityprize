@@ -361,7 +361,8 @@ theorem shared_support_incidence_budget {I Coord : Type*}
       have hp := Finset.sum_le_sum_of_subset
         (f := fun i : I => if x ∈ Q i then (1 : ℕ) else 0)
         (Finset.subset_univ ({i, j} : Finset I))
-      simpa [hx, hij, hxi, hxj] using hp
+      rw [Finset.sum_insert (by simp [hij]), Finset.sum_singleton] at hp
+      simpa only [if_pos hx, if_pos hxi, if_pos hxj] using hp
     · simp only [if_neg hx]
       exact Nat.zero_le _
   have hs := Finset.sum_le_sum (fun x (_ : x ∈ Finset.univ) => hpoint x)
