@@ -10,7 +10,7 @@ threshold, sponsor-equivalence theorem or matching bounds are claimed.
 
 The module is `Frontier/_IncidenceDependencyArithmetic.lean` in namespace
 `ProximityGap.IncidenceDependencyArithmetic`. It imports Mathlib only and has no
-dependency on PR #224. Its twenty exported theorems are audited in the focused
+dependency on PR #224. Its twenty-one exported theorems are audited in the focused
 workflow. Only `propext`, `Classical.choice` and `Quot.sound` are permitted.
 
 Let `W_i` be finite-dimensional subspaces of `F^n` supported on `Q_i`. Let `A`
@@ -46,6 +46,17 @@ differs. The rank-activity condition remains an argument.
 parameters and their actual error sets of cardinality at most `t`. The module
 also proves the coordinate arithmetic and finite summation lemma for the earlier
 minimal-dependency ledger. Its structural counting inputs remain explicit.
+
+`affine_heads_of_small_error_relation` gives a direct geometric transfer.
+For actual code heads w_i at parameters gamma_i, let their errors have supports
+Q_i of size at most t. If a relation among these errors has every coefficient
+nonzero and m*t < 2D, then all heads lie on one code-valued affine line.
+Two distinct selected parameters determine its coefficients. The theorem derives
+this conclusion from error agreement, the relation and code distance, without a
+rank-activity assumption or a received-quotient independence assumption.
+At m=4 and 2t<D it rules out a full four-error relation spanning different
+head lines. It does not rule out a four-head configuration on one line or a
+relation having zero coefficients. Those require their separate geometric caps.
 
 ## Exact first-sponsor arithmetic
 
@@ -146,6 +157,6 @@ reductions to #164. It does not close that issue or claim a SlopCash award.
 ## Verification
 
 The focused hosted workflow runs both independent probes and checks the Lean
-source with `lake env lean`, followed by an exact twenty-declaration axiom
+source with `lake env lean`, followed by an exact twenty-one-declaration axiom
 audit. Local builds are unnecessary. The module is also imported by the
 research umbrella for normal repository validation.

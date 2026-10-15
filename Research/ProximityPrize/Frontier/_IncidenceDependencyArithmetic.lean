@@ -389,6 +389,76 @@ theorem projected_relation_incidence_budget {F I Coord : Type*} [Field F]
   have hi := shared_support_incidence_budget Q
   omega
 
+/-- A short full-support relation between actual decoding errors forces every
+decoded head onto one affine line. No rank-activity hypothesis is required. -/
+theorem affine_heads_of_small_error_relation {F I Coord : Type*} [Field F]
+    [Fintype I] [Fintype Coord] [DecidableEq I] [DecidableEq Coord]
+    (C : Submodule F (Coord → F)) (u₀ u₁ : Coord → F)
+    (w : I → (Coord → F)) (γ c : I → F) (Q : I → Finset Coord)
+    (D t : ℕ) (hw : ∀ i, w i ∈ C) (hc : ∀ i, c i ≠ 0)
+    (hagree : ∀ i x, x ∉ Q i → w i x = u₀ x + γ i * u₁ x)
+    (hweight : ∀ i, (Q i).card ≤ t)
+    (hsmall : Fintype.card I * t < 2 * D)
+    (hrel : (∑ i, c i • (u₀ + γ i • u₁ - w i)) = 0)
+    (i₀ i₁ : I) (hγ : γ i₀ ≠ γ i₁)
+    (hdistance : ∀ v ∈ C, ∀ B : Finset Coord, B.card < D →
+      (∀ x ∉ B, v x = 0) → v = 0) :
+    ∃ U V, U ∈ C ∧ V ∈ C ∧ ∀ i, w i = U + γ i • V := by
+  classical
+  let S := sharedSupport Q
+  have houtside : ∀ i x, x ∉ S → w i x = u₀ x + γ i * u₁ x := by
+    intro i x hx
+    by_cases hxi : x ∈ Q i
+    · have hj : ∀ j, j ≠ i → x ∉ Q j := by
+        intro j hji hxj
+        apply hx
+        simp only [S, sharedSupport, Finset.mem_filter, Finset.mem_univ, true_and]
+        exact ⟨i, j, Ne.symm hji, hxi, hxj⟩
+      have hz : (∑ j, c j * (u₀ x + γ j * u₁ x - w j x)) = 0 := by
+        have he := congrArg (fun v : Coord → F => v x) hrel
+        simpa using he
+      have he : (∑ j, c j * (u₀ x + γ j * u₁ x - w j x)) =
+          c i * (u₀ x + γ i * u₁ x - w i x) := by
+        apply Finset.sum_eq_single i
+        · intro j _ hji
+          rw [hagree j x (hj j hji)]
+          ring
+        · simp
+      rw [he] at hz
+      exact (sub_eq_zero.mp ((mul_eq_zero.mp hz).resolve_left (hc i))).symm
+    · exact hagree i x hxi
+  have hcard : S.card < D := by
+    have hi := shared_support_incidence_budget Q
+    have hwgt := Finset.sum_le_sum (fun i (_ : i ∈ Finset.univ) => hweight i)
+    have hsum : (∑ _i : I, t) = Fintype.card I * t := by simp
+    rw [hsum] at hwgt
+    change 2 * S.card ≤ _ at hi
+    omega
+  let V := (γ i₀ - γ i₁)⁻¹ • (w i₀ - w i₁)
+  let U := w i₀ - γ i₀ • V
+  have hVC : V ∈ C := C.smul_mem _ (C.sub_mem (hw i₀) (hw i₁))
+  have hUC : U ∈ C := C.sub_mem (hw i₀) (C.smul_mem _ hVC)
+  have hV : ∀ x ∉ S, V x = u₁ x := by
+    intro x hx
+    have hd : w i₀ x - w i₁ x = (γ i₀ - γ i₁) * u₁ x := by
+      rw [houtside i₀ x hx, houtside i₁ x hx]
+      ring
+    change (γ i₀ - γ i₁)⁻¹ * (w i₀ x - w i₁ x) = u₁ x
+    rw [hd, ← mul_assoc, inv_mul_cancel₀ (sub_ne_zero.mpr hγ), one_mul]
+  have hU : ∀ x ∉ S, U x = u₀ x := by
+    intro x hx
+    change w i₀ x - γ i₀ * V x = u₀ x
+    rw [hV x hx, houtside i₀ x hx]
+    ring
+  refine ⟨U, V, hUC, hVC, ?_⟩
+  intro i
+  apply sub_eq_zero.mp
+  apply hdistance _ (C.sub_mem (hw i) (C.add_mem hUC (C.smul_mem _ hVC))) S hcard
+  intro x hx
+  change w i x - (U x + γ i * V x) = 0
+  rw [houtside i x hx, hU x hx, hV x hx]
+  ring
+
 /-- Error plane of an affine family of decoded heads. -/
 def affineErrorPlane {F Coord : Type*} [Field F]
     (u₀ u₁ U V : Coord → F) : Submodule F (Coord → F) :=
@@ -641,3 +711,4 @@ end ProximityGap.IncidenceDependencyArithmetic
 #print axioms ProximityGap.IncidenceDependencyArithmetic.three_head_support_budget
 #print axioms ProximityGap.IncidenceDependencyArithmetic.shared_support_incidence_budget
 #print axioms ProximityGap.IncidenceDependencyArithmetic.projected_relation_incidence_budget
+#print axioms ProximityGap.IncidenceDependencyArithmetic.affine_heads_of_small_error_relation
