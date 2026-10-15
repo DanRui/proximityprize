@@ -10,7 +10,7 @@ threshold, sponsor-equivalence theorem or matching bounds are claimed.
 
 The module is `Frontier/_IncidenceDependencyArithmetic.lean` in namespace
 `ProximityGap.IncidenceDependencyArithmetic`. It imports Mathlib only and has no
-dependency on PR #224. Its eighteen exported theorems are audited in the focused
+dependency on PR #224. Its twenty exported theorems are audited in the focused
 workflow. Only `propext`, `Classical.choice` and `Quot.sound` are permitted.
 
 Let `W_i` be finite-dimensional subspaces of `F^n` supported on `Q_i`. Let `A`
@@ -24,6 +24,12 @@ of every component of every relation. Then:
 3. `projected_relation_shortening` proves
    `D + sum_i a_i <= card(S) + 3 + h`, provided `sum_i a_i >= h+3`,
    the code has distance at least `D`, and each `W_i <= C + P` with `dim P <= 2`.
+
+The incidence-budget form also proves
+`2(D + sum_i a_i) <= sum_i card(Q_i) + 6 + 2h`.
+Here the shared-support cardinality is eliminated by double counting its two
+required incidences. This is a necessary weighted rank constraint, with the
+same rank-activity and received-space hypotheses.
 
 The proof graph is shortened Singleton, received-space shortening, relation-core
 support and the exact rank identity, followed by projected-relation shortening.
@@ -140,6 +146,6 @@ reductions to #164. It does not close that issue or claim a SlopCash award.
 ## Verification
 
 The focused hosted workflow runs both independent probes and checks the Lean
-source with `lake env lean`, followed by an exact eighteen-declaration axiom
+source with `lake env lean`, followed by an exact twenty-declaration axiom
 audit. Local builds are unnecessary. The module is also imported by the
 research umbrella for normal repository validation.

@@ -344,6 +344,50 @@ theorem projected_relation_shortening {F I Coord : Type*} [Field F]
   have hs := relation_core_shortening C P W Q D hDpos hP hW hsupport hrank hdistance
   omega
 
+/-- Shared coordinates consume at least two incidences in the support ledger. -/
+theorem shared_support_incidence_budget {I Coord : Type*}
+    [Fintype I] [Fintype Coord] [DecidableEq I] [DecidableEq Coord]
+    (Q : I → Finset Coord) :
+    2 * (sharedSupport Q).card ≤ ∑ i, (Q i).card := by
+  classical
+  have hpoint : ∀ x : Coord,
+      (if x ∈ sharedSupport Q then 2 else 0) ≤
+        ∑ i : I, if x ∈ Q i then 1 else 0 := by
+    intro x
+    by_cases hx : x ∈ sharedSupport Q
+    · obtain ⟨i, j, hij, hxi, hxj⟩ :
+          ∃ i j, i ≠ j ∧ x ∈ Q i ∧ x ∈ Q j := by
+        simpa [sharedSupport] using hx
+      have hp := Finset.sum_le_sum_of_subset
+        (f := fun i : I => if x ∈ Q i then (1 : ℕ) else 0)
+        (Finset.subset_univ ({i, j} : Finset I))
+      simpa [hx, hij, hxi, hxj] using hp
+    · simp only [if_neg hx]
+      exact Nat.zero_le _
+  have hs := Finset.sum_le_sum (fun x (_ : x ∈ Finset.univ) => hpoint x)
+  rw [Finset.sum_comm] at hs
+  simpa [Finset.sum_ite, mul_comm] using hs
+
+/-- Global relation shortening expressed directly in the total support budget. -/
+theorem projected_relation_incidence_budget {F I Coord : Type*} [Field F]
+    [Fintype I] [Fintype Coord] [DecidableEq I] [DecidableEq Coord]
+    (C P : Submodule F (Coord → F))
+    (W : I → Submodule F (Coord → F)) (Q : I → Finset Coord)
+    (D : ℕ) (hDpos : 0 < D) (hP : Module.finrank F P ≤ 2)
+    (hW : ∀ i, W i ≤ C ⊔ P)
+    (hsupport : ∀ i, ∀ v ∈ W i, ∀ x ∉ Q i, v x = 0)
+    (hactive : Module.finrank F (LinearMap.ker (familySum W)) + 3 ≤
+      ∑ i, Module.finrank F (LinearMap.range (relationProjection W i)))
+    (hdistance : ∀ v ∈ C, ∀ B : Finset Coord, B.card < D →
+      (∀ x ∉ B, v x = 0) → v = 0) :
+    2 * ((∑ i, Module.finrank F (LinearMap.range (relationProjection W i))) + D) ≤
+      (∑ i, (Q i).card) + 6 +
+        2 * Module.finrank F (LinearMap.ker (familySum W)) := by
+  have hr := projected_relation_shortening C P W Q D hDpos hP hW
+    hsupport hactive hdistance
+  have hi := shared_support_incidence_budget Q
+  omega
+
 /-- Error plane of an affine family of decoded heads. -/
 def affineErrorPlane {F Coord : Type*} [Field F]
     (u₀ u₁ U V : Coord → F) : Submodule F (Coord → F) :=
@@ -594,3 +638,5 @@ end ProximityGap.IncidenceDependencyArithmetic
 #print axioms ProximityGap.IncidenceDependencyArithmetic.affine_support_pair_cover
 #print axioms ProximityGap.IncidenceDependencyArithmetic.three_pair_cover_card
 #print axioms ProximityGap.IncidenceDependencyArithmetic.three_head_support_budget
+#print axioms ProximityGap.IncidenceDependencyArithmetic.shared_support_incidence_budget
+#print axioms ProximityGap.IncidenceDependencyArithmetic.projected_relation_incidence_budget
