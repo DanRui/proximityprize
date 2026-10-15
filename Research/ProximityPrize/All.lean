@@ -1773,6 +1773,7 @@ import Research.ProximityPrize.Frontier._IdealLatticeMinkowskiCorrected
 import Research.ProximityPrize.Frontier._IdealSVPGirthVerdict
 import Research.ProximityPrize.Frontier._ImprimitiveBadSetDecomp
 import Research.ProximityPrize.Frontier._ImprimitiveRatioLevelSet
+import Research.ProximityPrize.Frontier._IncidenceDependencyArithmetic
 import Research.ProximityPrize.Frontier._IncidenceOffsetMomentRatioSandwich
 import Research.ProximityPrize.Frontier._IncidenceSmoothingDeconvolutionBarrier
 import Research.ProximityPrize.Frontier._InvEnergyLargeSupportBSG
