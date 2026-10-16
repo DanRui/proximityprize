@@ -308,6 +308,58 @@ def extra_explicit_binders(binders: str, result: str) -> list[str]:
     return sorted(set(extras))
 
 
+def has_top_level(text: str, token: str) -> bool:
+    """True when `token` occurs at bracket depth 0 of `text`."""
+    depth = 0
+    i = 0
+    while i < len(text):
+        c = text[i]
+        if c in OPEN_BRACKETS:
+            depth += 1
+        elif c in CLOSE_BRACKETS:
+            depth = max(0, depth - 1)
+        elif depth == 0 and text.startswith(token, i):
+            return True
+        i += 1
+    return False
+
+
+NUMERAL_RE = re.compile(r"^(?:\d+|0x[0-9a-fA-F]+|∅|\[\])$")
+
+
+def specialised_arguments(result: str, rname: str) -> list[str]:
+    """Named arguments of the residual head fixed to a literal, e.g. `(k := 0)`.
+
+    A provider that fixes a parameter of the residual to a numeral (or `∅`)
+    proves one instance, not the residual: `Foo (k := 0)` is typically vacuous.
+    """
+    s = strip_forall_prefix(result)
+    m = re.search(r"(?<![\w.'])(?:[\w.']*\.)?" + re.escape(rname) + r"(?![\w'])", s)
+    if not m:
+        return []
+    rest = s[m.end():]
+    out: list[str] = []
+    depth = 0
+    start = None
+    for i, c in enumerate(rest):
+        if c in OPEN_BRACKETS:
+            if depth == 0:
+                start = i
+            depth += 1
+        elif c in CLOSE_BRACKETS:
+            depth = max(0, depth - 1)
+            if depth == 0 and start is not None:
+                group = rest[start + 1 : i]
+                nm = re.match(r"\s*([^\s:()]+)\s*:=\s*(.+?)\s*$", group, re.S)
+                if nm and NUMERAL_RE.match(nm.group(2).strip()):
+                    out.append(f"{nm.group(1)} := {nm.group(2).strip()}")
+                start = None
+        elif depth == 0 and not c.isspace() and c not in "@":
+            if not (c.isalnum() or c in "_'.⁻"):
+                break
+    return out
+
+
 def lower_first(name: str) -> str:
     return name[:1].lower() + name[1:] if name else name
 
@@ -493,6 +545,9 @@ def find_providers(all_decls: list[dict], residuals: list[dict]) -> None:
                     if mentions_word(d["result"], rname):
                         targets.add(rname)
         consumed = [n for n in census_names if mentions_word(d["binders"], n)]
+        # `P ↔ Q` states an equivalence; it proves nothing about `P` itself.
+        is_equivalence = has_top_level(result_no_forall, "↔")
+        specialised = {rname: specialised_arguments(d["result"], rname) for rname in targets}
         provider_ns = _ns_of(d["fq_name"])
         for rname in targets:
             head_for_resolution = head_full if head_last == rname else ""
@@ -507,6 +562,8 @@ def find_providers(all_decls: list[dict], residuals: list[dict]) -> None:
                         "conditional_on_residuals": consumed,
                         "extra_explicit_binders": extra_binders,
                         "ambiguous_name_match": ambiguous,
+                        "equivalence": is_equivalence,
+                        "specialised_arguments": specialised.get(rname, []),
                     }
                 )
 
@@ -547,6 +604,8 @@ def find_providers(all_decls: list[dict], residuals: list[dict]) -> None:
                 tuple(p["conditional_on_residuals"]),
                 tuple(p["extra_explicit_binders"]),
                 p["ambiguous_name_match"],
+                p.get("equivalence", False),
+                tuple(p.get("specialised_arguments", [])),
             )
             if key in seen:
                 continue
@@ -563,6 +622,8 @@ def find_providers(all_decls: list[dict], residuals: list[dict]) -> None:
             if not p["conditional_on_residuals"]
             and not p["extra_explicit_binders"]
             and not p["ambiguous_name_match"]
+            and not p["equivalence"]
+            and not p["specialised_arguments"]
         ]
         concrete_refutations = [
             p
@@ -571,10 +632,13 @@ def find_providers(all_decls: list[dict], residuals: list[dict]) -> None:
             and not p["extra_explicit_binders"]
             and not p["ambiguous_name_match"]
         ]
-        if concrete:
-            r["status"] = "discharged"
-        elif concrete_refutations:
+        # A proved negation outranks any apparent provider: a statement
+        # cannot be both discharged and refuted, so the "provider" is a
+        # vacuous or specialised instance the census failed to recognise.
+        if concrete_refutations:
             r["status"] = "refuted"
+        elif concrete:
+            r["status"] = "discharged"
         else:
             r["status"] = "open"
 
@@ -704,8 +768,10 @@ def write_wiki_markdown(path: Path, summary: dict, residuals: list[dict], near_m
         "`def ...Residual ... : Prop`. A residual is **discharged** only when a concrete",
         "provider has no residual dependencies, no extra proof-like explicit binders, and no",
         "ambiguous namespace match. Conditional reductions are useful proof plumbing, but they",
-        "remain **open** until their side conditions are proved. A residual is **refuted** when",
-        "the tree contains a concrete theorem of a negated residual instance.",
+        "remain **open** until their side conditions are proved. An equivalence (`R ↔ Q`) or an",
+        "instance with a parameter fixed to a numeral (`R (k := 0)`) is not a provider. A residual",
+        "is **refuted** when the tree contains a concrete theorem of a negated residual instance,",
+        "and a proved negation outranks any apparent provider.",
         "",
         "The named-residual convention is a modularity pattern, not an incompleteness marker:",
         "always check this census before treating a `*Residual` name as open proof debt.",
