@@ -15,7 +15,7 @@ def kinds(source: str) -> list[tuple[str, str, str]]:
         root = Path(directory)
         folder = root / "ArkLib"
         folder.mkdir()
-        (folder / "Probe.lean").write_text(source)
+        (folder / "Probe.lean").write_text(source, encoding="utf-8")
         rows = sorry_census.census(root)
     return [(row["token"], row["kind"], row["decl"]) for row in rows]
 
@@ -217,7 +217,7 @@ def cli_holes(source: str) -> tuple[int, bool]:
         (root / "ArkLib").mkdir()
         folder = root / "Research" / "ProximityPrize" / "Frontier"
         folder.mkdir(parents=True)
-        (folder / "Probe.lean").write_text(source)
+        (folder / "Probe.lean").write_text(source, encoding="utf-8")
         out = root / "census.json"
         proc = subprocess.run(
             [sys.executable, str(script), "--root", str(root), "--fail-on-holes",
@@ -275,6 +275,57 @@ class SorryCensusSpliceParsing(unittest.TestCase):
     def test_bang_control_matches_bangless(self):
         source = 'def t := s!"{/- } -/ (sorry : Nat)}"\n'
         self.assertEqual(kinds(source), [("sorry", "hole", "def t")])
+
+
+# Reviewer fixture: compiles on Lean v4.30.0-rc2 with `hidden` depending on
+# [sorryAx]. The `"` is part of the escaped identifier, not a string opener.
+REVIEW_ESCAPED_QUOTE = (
+    'def «"» : Nat := 1\n'
+    "theorem hidden : False := sorry\n"
+    "#print axioms hidden\n"
+)
+
+# Each also compiles with [sorryAx]; a naive scan opens a string, comment, or
+# splice brace inside the escaped identifier.
+ESCAPED_IDENTIFIER_SOURCES = {
+    "line_comment_marker": "def «a -- b» : Nat := 1\ntheorem t : False := sorry\n",
+    "block_comment_opener": "def «/-» : Nat := 2\ntheorem t : False := sorry\n",
+    "multiline_with_quote": 'def «multi\nline"» : Nat := 4\ntheorem t : False := sorry\n',
+    "dotted_component": 'def Foo.«x"y».bar : Nat := 5\ntheorem t : False := sorry\n',
+    "brace_in_splice": (
+        "theorem t : True := by\n"
+        '  let _ : Nat := dbg_trace "{let «}» := 0; (sorry : Nat)}"; 0\n'
+        "  trivial\n"
+    ),
+}
+
+
+class SorryCensusEscapedIdentifiers(unittest.TestCase):
+    def test_reviewer_fixture_is_a_hole(self):
+        self.assertEqual(kinds(REVIEW_ESCAPED_QUOTE), [("sorry", "hole", "theorem hidden")])
+        self.assertEqual(cli_holes(REVIEW_ESCAPED_QUOTE), (1, True))
+
+    def test_markers_inside_escaped_identifiers_do_not_hide_sorry(self):
+        for name, source in ESCAPED_IDENTIFIER_SOURCES.items():
+            with self.subTest(name=name):
+                self.assertEqual(kinds(source), [("sorry", "hole", "theorem t")])
+                self.assertEqual(cli_holes(source), (1, True))
+
+    def test_guillemet_in_literal_or_comment_does_not_open_an_identifier(self):
+        source = (
+            "def c := '«'\n"
+            'def s := "«"\n'
+            "/- « -/\n"
+            "theorem t : False := sorry -- »\n"
+            'def u := "sorry »"\n'
+        )
+        self.assertEqual(
+            kinds(source), [("sorry", "hole", "theorem t"), ("sorry", "doc", "def u")])
+
+    def test_unterminated_escape_scans_on(self):
+        # Lean rejects this file, but the scanner must not mask the rest.
+        source = "def «x : Nat := 1\ntheorem t : False := sorry\n"
+        self.assertEqual(kinds(source), [("sorry", "hole", "theorem t")])
 
 
 if __name__ == "__main__":

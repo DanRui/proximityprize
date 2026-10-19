@@ -125,6 +125,8 @@ def _scan_mask(text: str, *, all_interpolated: bool) -> list[bool]:
     With `all_interpolated`, every non-raw string is treated as interpolated.
     Masking literals stops `--` / `/-` inside a string from swallowing a later
     `sorry`, which the comment-only scan reported as a docstring mention.
+    Escaped identifiers `«...»` are skipped first, so a `"`, `--`, `/-`, or
+    brace inside one is part of the name.
     """
     n = len(text)
     mask = [False] * n
@@ -239,6 +241,15 @@ def _scan_mask(text: str, *, all_interpolated: bool) -> list[bool]:
     def scan_code(i: int, *, interpolating: bool) -> int:
         brace = 0
         while i < n:
+            if text[i] == "«":
+                # Lean reads everything up to the next `»` as one escaped
+                # identifier (`def «"»`, `«--»`, `«}»`), so none of it may open
+                # a string, comment, or splice brace. The text stays live.
+                # Unterminated `«` is a Lean lex error; scan on normally.
+                j = text.find("»", i + 1)
+                if j >= 0:
+                    i = j + 1
+                    continue
             if text.startswith("--", i):
                 j = text.find("\n", i)
                 mark(i, n if j < 0 else j)
