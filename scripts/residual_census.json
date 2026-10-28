@@ -1,9 +1,9 @@
 {
  "summary": {
   "total": 89,
-  "open": 44,
-  "discharged": 44,
-  "refuted": 1,
+  "open": 49,
+  "discharged": 35,
+  "refuted": 5,
   "by_top_dir": {
    "(root)": {
     "total": 1,
@@ -13,9 +13,9 @@
    },
    "Data": {
     "total": 24,
-    "open": 16,
-    "discharged": 8,
-    "refuted": 0
+    "open": 17,
+    "discharged": 3,
+    "refuted": 4
    },
    "OracleReduction": {
     "total": 39,
@@ -25,8 +25,8 @@
    },
    "ProofSystem": {
     "total": 14,
-    "open": 6,
-    "discharged": 8,
+    "open": 10,
+    "discharged": 4,
     "refuted": 0
    },
    "ToMathlib": {
@@ -63,7 +63,9 @@
      "extra_explicit_binders": [
       "hres"
      ],
-     "ambiguous_name_match": false
+     "ambiguous_name_match": false,
+     "equivalence": false,
+     "specialised_arguments": []
     },
     {
      "name": "AGL24.frankOrientationResidual_of_rootedOutCutTheorem",
@@ -74,7 +76,9 @@
      "extra_explicit_binders": [
       "hfrank"
      ],
-     "ambiguous_name_match": false
+     "ambiguous_name_match": false,
+     "equivalence": false,
+     "specialised_arguments": []
     }
    ],
    "status": "open"
@@ -94,7 +98,9 @@
      "extra_explicit_binders": [
       "hgm"
      ],
-     "ambiguous_name_match": false
+     "ambiguous_name_match": false,
+     "equivalence": false,
+     "specialised_arguments": []
     },
     {
      "name": "ArkLib.GMMDS.gmmDsResidual_of_lovett",
@@ -106,7 +112,9 @@
       "hbridge",
       "hlovett"
      ],
-     "ambiguous_name_match": false
+     "ambiguous_name_match": false,
+     "equivalence": false,
+     "specialised_arguments": []
     },
     {
      "name": "ArkLib.GMMDS.gmmDsResidual_of_lovett_steps",
@@ -119,7 +127,9 @@
       "hprim",
       "hstep"
      ],
-     "ambiguous_name_match": false
+     "ambiguous_name_match": false,
+     "equivalence": false,
+     "specialised_arguments": []
     },
     {
      "name": "ArkLib.GMMDS.gmmDsResidual_of_lovett_via_steps",
@@ -132,7 +142,9 @@
       "hstep1",
       "hstep2"
      ],
-     "ambiguous_name_match": false
+     "ambiguous_name_match": false,
+     "equivalence": false,
+     "specialised_arguments": []
     },
     {
      "name": "ArkLib.GMMDS.gmmDsResidual_unconditional",
@@ -146,7 +158,9 @@
       "hk",
       "hminor"
      ],
-     "ambiguous_name_match": false
+     "ambiguous_name_match": false,
+     "equivalence": false,
+     "specialised_arguments": []
     }
    ],
    "status": "open"
@@ -167,7 +181,9 @@
       "hnonempty",
       "hwitness"
      ],
-     "ambiguous_name_match": false
+     "ambiguous_name_match": false,
+     "equivalence": false,
+     "specialised_arguments": []
     },
     {
      "name": "AGL24.symbolicFullRank_of_classical_imports_pinned",
@@ -182,7 +198,9 @@
       "hgm",
       "hnonempty"
      ],
-     "ambiguous_name_match": false
+     "ambiguous_name_match": false,
+     "equivalence": false,
+     "specialised_arguments": []
     },
     {
      "name": "AGL24.symbolicFullRankResidual_of_evaluated_witness",
@@ -193,7 +211,9 @@
      "extra_explicit_binders": [
       "hwitness"
      ],
-     "ambiguous_name_match": false
+     "ambiguous_name_match": false,
+     "equivalence": false,
+     "specialised_arguments": []
     },
     {
      "name": "AGL24.symbolicFullRankResidual_of_extension",
@@ -206,7 +226,9 @@
      "extra_explicit_binders": [
       "h'"
      ],
-     "ambiguous_name_match": false
+     "ambiguous_name_match": false,
+     "equivalence": false,
+     "specialised_arguments": []
     },
     {
      "name": "AGL24.symbolicFullRank_of_classical_imports",
@@ -222,7 +244,9 @@
       "hgmmds",
       "hnonempty"
      ],
-     "ambiguous_name_match": false
+     "ambiguous_name_match": false,
+     "equivalence": false,
+     "specialised_arguments": []
     },
     {
      "name": "AGL24.symbolicFullRank_of_rootedOutCut_and_dualZeroPattern",
@@ -235,7 +259,9 @@
       "hgm",
       "hnonempty"
      ],
-     "ambiguous_name_match": false
+     "ambiguous_name_match": false,
+     "equivalence": false,
+     "specialised_arguments": []
     },
     {
      "name": "AGL24.symbolicFullRank_via_lovett_pinned",
@@ -252,7 +278,9 @@
       "hnonempty",
       "hrc"
      ],
-     "ambiguous_name_match": false
+     "ambiguous_name_match": false,
+     "equivalence": false,
+     "specialised_arguments": []
     },
     {
      "name": "ArkLib.GMMDS.symbolicFullRank_lovett_free",
@@ -268,7 +296,9 @@
       "hminor",
       "hnonempty"
      ],
-     "ambiguous_name_match": false
+     "ambiguous_name_match": false,
+     "equivalence": false,
+     "specialised_arguments": []
     }
    ],
    "status": "open"
@@ -292,7 +322,9 @@
       "ht",
       "hwpc"
      ],
-     "ambiguous_name_match": false
+     "ambiguous_name_match": false,
+     "equivalence": false,
+     "specialised_arguments": []
     },
     {
      "name": "AGL24.rimFailureProb_of_symbolic",
@@ -307,7 +339,9 @@
       "ht",
       "hwpc"
      ],
-     "ambiguous_name_match": false
+     "ambiguous_name_match": false,
+     "equivalence": false,
+     "specialised_arguments": []
     }
    ],
    "status": "open"
@@ -325,7 +359,9 @@
      "line": 1058,
      "conditional_on_residuals": [],
      "extra_explicit_binders": [],
-     "ambiguous_name_match": false
+     "ambiguous_name_match": false,
+     "equivalence": false,
+     "specialised_arguments": []
     },
     {
      "name": "ProximityGap.GKL24FirstMomentResidual_inTree_two_delta_card",
@@ -334,7 +370,9 @@
      "line": 1080,
      "conditional_on_residuals": [],
      "extra_explicit_binders": [],
-     "ambiguous_name_match": false
+     "ambiguous_name_match": false,
+     "equivalence": false,
+     "specialised_arguments": []
     },
     {
      "name": "ProximityGap.GKL24FirstMomentResidual_inTree_delta_add_one_card",
@@ -343,7 +381,9 @@
      "line": 1536,
      "conditional_on_residuals": [],
      "extra_explicit_binders": [],
-     "ambiguous_name_match": false
+     "ambiguous_name_match": false,
+     "equivalence": false,
+     "specialised_arguments": []
     }
    ],
    "status": "discharged"
@@ -361,7 +401,9 @@
      "line": 1127,
      "conditional_on_residuals": [],
      "extra_explicit_binders": [],
-     "ambiguous_name_match": false
+     "ambiguous_name_match": false,
+     "equivalence": false,
+     "specialised_arguments": []
     },
     {
      "name": "ProximityGap.GKL24FirstMomentWitnessCoverResidual_of_maxCorr_cover",
@@ -372,7 +414,9 @@
      "extra_explicit_binders": [
       "hmax"
      ],
-     "ambiguous_name_match": false
+     "ambiguous_name_match": false,
+     "equivalence": false,
+     "specialised_arguments": []
     },
     {
      "name": "ProximityGap.GKL24FirstMomentWitnessCoverResidual_of_strict_cover",
@@ -385,7 +429,9 @@
       "hstrict",
       "hδp"
      ],
-     "ambiguous_name_match": false
+     "ambiguous_name_match": false,
+     "equivalence": false,
+     "specialised_arguments": []
     },
     {
      "name": "ProximityGap.GKL24FirstMomentWitnessCoverResidual_of_petal_cover",
@@ -396,7 +442,9 @@
      "extra_explicit_binders": [
       "hpetal"
      ],
-     "ambiguous_name_match": false
+     "ambiguous_name_match": false,
+     "equivalence": false,
+     "specialised_arguments": []
     }
    ],
    "status": "discharged"
@@ -416,7 +464,9 @@
      "extra_explicit_binders": [
       "hG"
      ],
-     "ambiguous_name_match": false
+     "ambiguous_name_match": false,
+     "equivalence": false,
+     "specialised_arguments": []
     },
     {
      "name": "CodingTheory.randomLinearLambdaLowerFirstMomentResidual_of_combinatorialWitness",
@@ -427,7 +477,9 @@
      "extra_explicit_binders": [
       "h"
      ],
-     "ambiguous_name_match": false
+     "ambiguous_name_match": false,
+     "equivalence": false,
+     "specialised_arguments": []
     }
    ],
    "status": "open"
@@ -449,7 +501,9 @@
      "extra_explicit_binders": [
       "hCanonical"
      ],
-     "ambiguous_name_match": false
+     "ambiguous_name_match": false,
+     "equivalence": false,
+     "specialised_arguments": []
     },
     {
      "name": "ProximityGap.strictCoeffPolysResidual_of_commonAgreement",
@@ -462,7 +516,9 @@
      "extra_explicit_binders": [
       "h"
      ],
-     "ambiguous_name_match": false
+     "ambiguous_name_match": false,
+     "equivalence": false,
+     "specialised_arguments": []
     },
     {
      "name": "ProximityGap.strictCoeffPolysResidual_of_one_le_mul",
@@ -473,7 +529,9 @@
      "extra_explicit_binders": [
       "h"
      ],
-     "ambiguous_name_match": false
+     "ambiguous_name_match": false,
+     "equivalence": false,
+     "specialised_arguments": []
     },
     {
      "name": "ProximityGap.strictCoeffPolysResidual_of_card_le",
@@ -486,7 +544,9 @@
       "hq",
       "hδ"
      ],
-     "ambiguous_name_match": false
+     "ambiguous_name_match": false,
+     "equivalence": false,
+     "specialised_arguments": []
     },
     {
      "name": "ProximityGap.strictCoeffPolysResidual_of_card_le_e7",
@@ -497,7 +557,9 @@
      "extra_explicit_binders": [
       "hq"
      ],
-     "ambiguous_name_match": false
+     "ambiguous_name_match": false,
+     "equivalence": false,
+     "specialised_arguments": []
     },
     {
      "name": "ArkLib.RawGS304.strictCoeffPolysResidual_of_rawGSCargo",
@@ -508,7 +570,9 @@
      "extra_explicit_binders": [
       "hInput"
      ],
-     "ambiguous_name_match": false
+     "ambiguous_name_match": false,
+     "equivalence": false,
+     "specialised_arguments": []
     },
     {
      "name": "ProximityGap.strictCoeffPolysResidual_of_large",
@@ -521,7 +585,9 @@
      "extra_explicit_binders": [
       "hLarge"
      ],
-     "ambiguous_name_match": false
+     "ambiguous_name_match": false,
+     "equivalence": false,
+     "specialised_arguments": []
     },
     {
      "name": "ProximityGap.strictCoeffPolysResidual_iff_large",
@@ -530,7 +596,9 @@
      "line": 142,
      "conditional_on_residuals": [],
      "extra_explicit_binders": [],
-     "ambiguous_name_match": false
+     "ambiguous_name_match": false,
+     "equivalence": true,
+     "specialised_arguments": []
     },
     {
      "name": "ProximityGap.strictCoeffPolysResidual_of_strictCoeffPolysExcResidual_zero",
@@ -543,7 +611,9 @@
      "extra_explicit_binders": [
       "h"
      ],
-     "ambiguous_name_match": false
+     "ambiguous_name_match": false,
+     "equivalence": false,
+     "specialised_arguments": []
     },
     {
      "name": "ArkLib.FaithfulCurveExtraction.strictCoeffPolysResidual_of_localSeriesDatumOn",
@@ -554,7 +624,9 @@
      "extra_explicit_binders": [
       "hInput"
      ],
-     "ambiguous_name_match": false
+     "ambiguous_name_match": false,
+     "equivalence": false,
+     "specialised_arguments": []
     },
     {
      "name": "ArkLib.FaithfulCurveExtraction.strictCoeffPolysResidual_of_curveHenselDatum",
@@ -565,7 +637,9 @@
      "extra_explicit_binders": [
       "hInput"
      ],
-     "ambiguous_name_match": false
+     "ambiguous_name_match": false,
+     "equivalence": false,
+     "specialised_arguments": []
     },
     {
      "name": "ArkLib.CurveHenselSupply.strictCoeffPolysResidual_of_gsCurveInput",
@@ -576,7 +650,9 @@
      "extra_explicit_binders": [
       "hInput"
      ],
-     "ambiguous_name_match": false
+     "ambiguous_name_match": false,
+     "equivalence": false,
+     "specialised_arguments": []
     },
     {
      "name": "ArkLib.FaithfulCurveExtraction.strictCoeffPolysResidual_of_curveFamilyData",
@@ -587,7 +663,9 @@
      "extra_explicit_binders": [
       "hInput"
      ],
-     "ambiguous_name_match": false
+     "ambiguous_name_match": false,
+     "equivalence": false,
+     "specialised_arguments": []
     },
     {
      "name": "ArkLib.FaithfulFrontier.strictCoeffPolysResidual_of_faithful_frontier",
@@ -598,7 +676,9 @@
      "extra_explicit_binders": [
       "hInput"
      ],
-     "ambiguous_name_match": false
+     "ambiguous_name_match": false,
+     "equivalence": false,
+     "specialised_arguments": []
     },
     {
      "name": "ArkLib.KeystoneStrictResidual.strictCoeffPolysResidual_of_betaRec",
@@ -609,7 +689,9 @@
      "extra_explicit_binders": [
       "hInput"
      ],
-     "ambiguous_name_match": false
+     "ambiguous_name_match": false,
+     "equivalence": false,
+     "specialised_arguments": []
     },
     {
      "name": "ArkLib.KeystoneStrictResidual.strictCoeffPolysResidual_of_betaRec_offcentre",
@@ -620,7 +702,9 @@
      "extra_explicit_binders": [
       "hInput"
      ],
-     "ambiguous_name_match": false
+     "ambiguous_name_match": false,
+     "equivalence": false,
+     "specialised_arguments": []
     },
     {
      "name": "ArkLib.KeystoneStrictResidual.strictCoeffPolysResidual_of_betaRec_offcentreFin",
@@ -631,7 +715,9 @@
      "extra_explicit_binders": [
       "hInput"
      ],
-     "ambiguous_name_match": false
+     "ambiguous_name_match": false,
+     "equivalence": false,
+     "specialised_arguments": []
     },
     {
      "name": "ArkLib.KeystoneStrictResidual.strictCoeffPolysResidual_of_betaRecFin",
@@ -642,7 +728,9 @@
      "extra_explicit_binders": [
       "hInput"
      ],
-     "ambiguous_name_match": false
+     "ambiguous_name_match": false,
+     "equivalence": false,
+     "specialised_arguments": []
     },
     {
      "name": "ArkLib.KeystoneStrictResidual.strictCoeffPolysResidual_zero",
@@ -651,7 +739,11 @@
      "line": 478,
      "conditional_on_residuals": [],
      "extra_explicit_binders": [],
-     "ambiguous_name_match": false
+     "ambiguous_name_match": false,
+     "equivalence": false,
+     "specialised_arguments": [
+      "k := 0"
+     ]
     },
     {
      "name": "ArkLib.OffcentreFaithful.strictCoeffPolysResidual_of_section5DataOffcentreFaithful",
@@ -662,7 +754,9 @@
      "extra_explicit_binders": [
       "hInput"
      ],
-     "ambiguous_name_match": false
+     "ambiguous_name_match": false,
+     "equivalence": false,
+     "specialised_arguments": []
     },
     {
      "name": "ArkLib.OffcentreKeystone.strictCoeffPolysResidual_of_section5DataOffcentreFin",
@@ -673,10 +767,12 @@
      "extra_explicit_binders": [
       "hInput"
      ],
-     "ambiguous_name_match": false
+     "ambiguous_name_match": false,
+     "equivalence": false,
+     "specialised_arguments": []
     }
    ],
-   "status": "discharged"
+   "status": "open"
   },
   {
    "name": "StrictCanonicalCoeffPolysResidual",
@@ -702,7 +798,9 @@
       "hNotLattice",
       "hStrict"
      ],
-     "ambiguous_name_match": false
+     "ambiguous_name_match": false,
+     "equivalence": false,
+     "specialised_arguments": []
     },
     {
      "name": "ArkLib.BoundaryCardResidual.boundaryCardResidual_of_lattice_residual",
@@ -716,7 +814,9 @@
       "hLattice",
       "hStrict"
      ],
-     "ambiguous_name_match": false
+     "ambiguous_name_match": false,
+     "equivalence": false,
+     "specialised_arguments": []
     },
     {
      "name": "ArkLib.BoundaryCardResidual.BoundaryCardQuantizationResiduals.toBoundaryCardResidual",
@@ -727,7 +827,9 @@
      "extra_explicit_binders": [
       "h"
      ],
-     "ambiguous_name_match": false
+     "ambiguous_name_match": false,
+     "equivalence": false,
+     "specialised_arguments": []
     },
     {
      "name": "ArkLib.BoundaryCardResidual.BoundaryCardLatticeData.toBoundaryCardResidual",
@@ -739,7 +841,9 @@
       "h",
       "hStrict"
      ],
-     "ambiguous_name_match": false
+     "ambiguous_name_match": false,
+     "equivalence": false,
+     "specialised_arguments": []
     },
     {
      "name": "ArkLib.BoundaryCardResidual.boundaryCardResidual_of_not_isSquare_deg_mul_card",
@@ -754,7 +858,9 @@
       "hsqrt_le",
       "hδeq"
      ],
-     "ambiguous_name_match": false
+     "ambiguous_name_match": false,
+     "equivalence": false,
+     "specialised_arguments": []
     },
     {
      "name": "ArkLib.BoundaryCardResidual.boundaryCardResidual_of_isSquare_deg_mul_card",
@@ -770,7 +876,9 @@
       "hdeg",
       "hsqrt_le"
      ],
-     "ambiguous_name_match": false
+     "ambiguous_name_match": false,
+     "equivalence": false,
+     "specialised_arguments": []
     },
     {
      "name": "ArkLib.BoundaryCardResidual.BoundaryCardLatticeData.toBoundaryCardResidual_isSquare",
@@ -784,7 +892,9 @@
       "hdeg",
       "hsqrt_le"
      ],
-     "ambiguous_name_match": false
+     "ambiguous_name_match": false,
+     "equivalence": false,
+     "specialised_arguments": []
     },
     {
      "name": "ArkLib.BoundaryCardResidual.BoundaryCardQuantizationResiduals.toBoundaryCardResidual_isSquare",
@@ -798,7 +908,9 @@
       "hdeg",
       "hsqrt_le"
      ],
-     "ambiguous_name_match": false
+     "ambiguous_name_match": false,
+     "equivalence": false,
+     "specialised_arguments": []
     },
     {
      "name": "ArkLib.BoundaryDischarge.boundaryCardResidual_of_boundary_cards_and_coeffPolys",
@@ -809,7 +921,9 @@
      "extra_explicit_binders": [
       "hBoundaryData"
      ],
-     "ambiguous_name_match": false
+     "ambiguous_name_match": false,
+     "equivalence": false,
+     "specialised_arguments": []
     },
     {
      "name": "ArkLib.BoundaryDischarge.BoundaryCardQuantizationData.toBoundaryCardResidual",
@@ -820,7 +934,9 @@
      "extra_explicit_binders": [
       "h"
      ],
-     "ambiguous_name_match": false
+     "ambiguous_name_match": false,
+     "equivalence": false,
+     "specialised_arguments": []
     },
     {
      "name": "ArkLib.BoundaryDischarge.boundaryCardResidual_of_lattice_data",
@@ -832,7 +948,9 @@
       "hLatticeData",
       "hStrict"
      ],
-     "ambiguous_name_match": false
+     "ambiguous_name_match": false,
+     "equivalence": false,
+     "specialised_arguments": []
     },
     {
      "name": "ArkLib.BoundaryDischarge.boundaryCardResidual_of_lattice_data_isSquare",
@@ -846,7 +964,9 @@
       "hdeg",
       "hsqrt_le"
      ],
-     "ambiguous_name_match": false
+     "ambiguous_name_match": false,
+     "equivalence": false,
+     "specialised_arguments": []
     },
     {
      "name": "ArkLib.BoundaryDischarge.boundaryCardResidual_zero",
@@ -855,7 +975,11 @@
      "line": 628,
      "conditional_on_residuals": [],
      "extra_explicit_binders": [],
-     "ambiguous_name_match": false
+     "ambiguous_name_match": false,
+     "equivalence": false,
+     "specialised_arguments": [
+      "k := 0"
+     ]
     }
    ],
    "refutations": [
@@ -887,7 +1011,7 @@
      "ambiguous_name_match": false
     }
    ],
-   "status": "discharged"
+   "status": "refuted"
   },
   {
    "name": "BoundaryProbabilityResidual",
@@ -907,7 +1031,9 @@
       "hBoundaryCard",
       "hδ"
      ],
-     "ambiguous_name_match": false
+     "ambiguous_name_match": false,
+     "equivalence": false,
+     "specialised_arguments": []
     },
     {
      "name": "ArkLib.Issue64Boundary.boundaryProbabilityResidual_of_subResiduals",
@@ -920,7 +1046,9 @@
       "hSub",
       "hδ"
      ],
-     "ambiguous_name_match": false
+     "ambiguous_name_match": false,
+     "equivalence": false,
+     "specialised_arguments": []
     },
     {
      "name": "ArkLib.BoundaryCardResidual.boundaryProbabilityResidual_of_lattice_residual",
@@ -935,7 +1063,9 @@
       "hStrict",
       "hδ"
      ],
-     "ambiguous_name_match": false
+     "ambiguous_name_match": false,
+     "equivalence": false,
+     "specialised_arguments": []
     },
     {
      "name": "ArkLib.BoundaryCardResidual.BoundaryCardLatticeData.toBoundaryProbabilityResidual",
@@ -948,7 +1078,9 @@
       "hStrict",
       "hδ"
      ],
-     "ambiguous_name_match": false
+     "ambiguous_name_match": false,
+     "equivalence": false,
+     "specialised_arguments": []
     },
     {
      "name": "ArkLib.BoundaryCardResidual.BoundaryCardQuantizationResiduals.toBoundaryProbabilityResidual",
@@ -960,7 +1092,9 @@
       "h",
       "hδ"
      ],
-     "ambiguous_name_match": false
+     "ambiguous_name_match": false,
+     "equivalence": false,
+     "specialised_arguments": []
     },
     {
      "name": "ArkLib.BoundaryCardResidual.boundaryProbabilityResidual_of_not_isSquare_deg_mul_card",
@@ -976,7 +1110,9 @@
       "hδeq",
       "hδle"
      ],
-     "ambiguous_name_match": false
+     "ambiguous_name_match": false,
+     "equivalence": false,
+     "specialised_arguments": []
     },
     {
      "name": "ArkLib.BoundaryCardResidual.boundaryProbabilityResidual_of_isSquare_deg_mul_card",
@@ -993,7 +1129,9 @@
       "hsqrt_le",
       "hδle"
      ],
-     "ambiguous_name_match": false
+     "ambiguous_name_match": false,
+     "equivalence": false,
+     "specialised_arguments": []
     },
     {
      "name": "ArkLib.BoundaryCardResidual.BoundaryCardLatticeData.toBoundaryProbabilityResidual_isSquare",
@@ -1008,7 +1146,9 @@
       "hsqrt_le",
       "hδ"
      ],
-     "ambiguous_name_match": false
+     "ambiguous_name_match": false,
+     "equivalence": false,
+     "specialised_arguments": []
     },
     {
      "name": "ArkLib.BoundaryCardResidual.BoundaryCardQuantizationResiduals.toBoundaryProbResidual_isSquare",
@@ -1023,7 +1163,9 @@
       "hsqrt_le",
       "hδ"
      ],
-     "ambiguous_name_match": false
+     "ambiguous_name_match": false,
+     "equivalence": false,
+     "specialised_arguments": []
     },
     {
      "name": "ArkLib.BoundaryDischarge.BoundaryCardQuantizationData.toBoundaryProbabilityResidual",
@@ -1035,7 +1177,9 @@
       "h",
       "hδ"
      ],
-     "ambiguous_name_match": false
+     "ambiguous_name_match": false,
+     "equivalence": false,
+     "specialised_arguments": []
     },
     {
      "name": "ArkLib.BoundaryDischarge.boundaryProbabilityResidual_of_lattice_data",
@@ -1048,7 +1192,9 @@
       "hStrict",
       "hδ"
      ],
-     "ambiguous_name_match": false
+     "ambiguous_name_match": false,
+     "equivalence": false,
+     "specialised_arguments": []
     },
     {
      "name": "ArkLib.BoundaryDischarge.boundaryProbabilityResidual_of_lattice_data_isSquare",
@@ -1063,7 +1209,9 @@
       "hsqrt_le",
       "hδ"
      ],
-     "ambiguous_name_match": false
+     "ambiguous_name_match": false,
+     "equivalence": false,
+     "specialised_arguments": []
     },
     {
      "name": "ArkLib.BoundaryDischarge.boundaryProbabilityResidual_zero",
@@ -1072,7 +1220,11 @@
      "line": 638,
      "conditional_on_residuals": [],
      "extra_explicit_binders": [],
-     "ambiguous_name_match": false
+     "ambiguous_name_match": false,
+     "equivalence": false,
+     "specialised_arguments": [
+      "k := 0"
+     ]
     },
     {
      "name": "ArkLib.FaithfulCurveExtraction.RoundConsumers.boundaryProbabilityResidual_of_strict",
@@ -1083,7 +1235,9 @@
      "extra_explicit_binders": [
       "hδ"
      ],
-     "ambiguous_name_match": false
+     "ambiguous_name_match": false,
+     "equivalence": false,
+     "specialised_arguments": []
     }
    ],
    "refutations": [
@@ -1097,7 +1251,7 @@
      "ambiguous_name_match": false
     }
    ],
-   "status": "discharged"
+   "status": "refuted"
   },
   {
    "name": "CurveCommonAgreementResidual",
@@ -1114,7 +1268,9 @@
      "extra_explicit_binders": [
       "h"
      ],
-     "ambiguous_name_match": false
+     "ambiguous_name_match": false,
+     "equivalence": false,
+     "specialised_arguments": []
     },
     {
      "name": "ProximityGap.curveCommonAgreementResidual_of_card_le",
@@ -1127,7 +1283,9 @@
       "hq",
       "hδ"
      ],
-     "ambiguous_name_match": false
+     "ambiguous_name_match": false,
+     "equivalence": false,
+     "specialised_arguments": []
     },
     {
      "name": "ProximityGap.curveCommonAgreementResidual_of_card_le_e7",
@@ -1139,7 +1297,9 @@
       "hdeg",
       "hq"
      ],
-     "ambiguous_name_match": false
+     "ambiguous_name_match": false,
+     "equivalence": false,
+     "specialised_arguments": []
     }
    ],
    "status": "open"
@@ -1170,7 +1330,9 @@
       "hStructured",
       "hterm"
      ],
-     "ambiguous_name_match": false
+     "ambiguous_name_match": false,
+     "equivalence": false,
+     "specialised_arguments": []
     }
    ],
    "status": "open"
@@ -1193,7 +1355,9 @@
       "hW",
       "hdHd"
      ],
-     "ambiguous_name_match": false
+     "ambiguous_name_match": false,
+     "equivalence": false,
+     "specialised_arguments": []
     }
    ],
    "status": "open"
@@ -1213,7 +1377,9 @@
      "extra_explicit_binders": [
       "hlc"
      ],
-     "ambiguous_name_match": false
+     "ambiguous_name_match": false,
+     "equivalence": false,
+     "specialised_arguments": []
     },
     {
      "name": "BCIKS20.HenselNumerator.faaDiBrunoSuccSumZeroResidual_of_forall_partitionMatchAt",
@@ -1224,7 +1390,9 @@
      "extra_explicit_binders": [
       "hat"
      ],
-     "ambiguous_name_match": false
+     "ambiguous_name_match": false,
+     "equivalence": false,
+     "specialised_arguments": []
     },
     {
      "name": "BCIKS20.HenselNumerator.faaDiBrunoSuccSumZeroResidual_of_partitionMatch",
@@ -1235,7 +1403,9 @@
      "extra_explicit_binders": [
       "hpart"
      ],
-     "ambiguous_name_match": false
+     "ambiguous_name_match": false,
+     "equivalence": false,
+     "specialised_arguments": []
     },
     {
      "name": "BCIKS20.HenselNumerator.faaDiBrunoSuccSumZero_of_restrictedFaaDiBrunoMatch",
@@ -1246,7 +1416,9 @@
      "extra_explicit_binders": [
       "hmatch"
      ],
-     "ambiguous_name_match": false
+     "ambiguous_name_match": false,
+     "equivalence": false,
+     "specialised_arguments": []
     },
     {
      "name": "BCIKS20.HenselNumerator.faaDiBrunoSuccSumZeroResidual_of_leadingCoeff_one",
@@ -1257,7 +1429,9 @@
      "extra_explicit_binders": [
       "hlc"
      ],
-     "ambiguous_name_match": false
+     "ambiguous_name_match": false,
+     "equivalence": false,
+     "specialised_arguments": []
     },
     {
      "name": "BCIKS20.HenselNumerator.faaDiBrunoSuccSumZero_iff_WfreeMatch_of_leadingCoeff_one",
@@ -1268,7 +1442,9 @@
      "extra_explicit_binders": [
       "hlc"
      ],
-     "ambiguous_name_match": false
+     "ambiguous_name_match": false,
+     "equivalence": true,
+     "specialised_arguments": []
     },
     {
      "name": "BCIKS20.HenselNumerator.FaaDiBrunoSuccSumZeroResidual.of_WfreeMatch",
@@ -1280,7 +1456,9 @@
       "hWfree",
       "hlc"
      ],
-     "ambiguous_name_match": false
+     "ambiguous_name_match": false,
+     "equivalence": false,
+     "specialised_arguments": []
     },
     {
      "name": "BCIKS20.HenselNumerator.FaaDiBrunoSuccSumZeroResidual.of_rangeWfreeMatch",
@@ -1292,7 +1470,9 @@
       "hlc",
       "hrange"
      ],
-     "ambiguous_name_match": false
+     "ambiguous_name_match": false,
+     "equivalence": false,
+     "specialised_arguments": []
     },
     {
      "name": "BCIKS20.HenselNumerator.faaDiBrunoSuccSumZeroResidual_iff_coeff_succ_eval",
@@ -1301,7 +1481,9 @@
      "line": 54,
      "conditional_on_residuals": [],
      "extra_explicit_binders": [],
-     "ambiguous_name_match": false
+     "ambiguous_name_match": false,
+     "equivalence": true,
+     "specialised_arguments": []
     },
     {
      "name": "BCIKS20.HenselNumerator.FaaDiBrunoSuccSumZeroResidual.of_eval_βHenselAssembled_eq_zero",
@@ -1312,7 +1494,9 @@
      "extra_explicit_binders": [
       "hroot"
      ],
-     "ambiguous_name_match": false
+     "ambiguous_name_match": false,
+     "equivalence": false,
+     "specialised_arguments": []
     },
     {
      "name": "BCIKS20.HenselNumerator.faaDiBrunoSuccSumZeroResidual_of_fullVanishes",
@@ -1323,7 +1507,9 @@
      "extra_explicit_binders": [
       "hvan"
      ],
-     "ambiguous_name_match": false
+     "ambiguous_name_match": false,
+     "equivalence": false,
+     "specialised_arguments": []
     },
     {
      "name": "BCIKS20.HenselNumerator.faaDiBrunoSuccSumZeroResidual_of_restrictedMatch",
@@ -1334,7 +1520,9 @@
      "extra_explicit_binders": [
       "hmatch"
      ],
-     "ambiguous_name_match": false
+     "ambiguous_name_match": false,
+     "equivalence": false,
+     "specialised_arguments": []
     }
    ],
    "refutations": [
@@ -1390,7 +1578,7 @@
      "ambiguous_name_match": false
     }
    ],
-   "status": "discharged"
+   "status": "refuted"
   },
   {
    "name": "RestrictedFaaDiBrunoMatchResidual",
@@ -1415,7 +1603,9 @@
      "extra_explicit_binders": [
       "hInput"
      ],
-     "ambiguous_name_match": false
+     "ambiguous_name_match": false,
+     "equivalence": false,
+     "specialised_arguments": []
     },
     {
      "name": "ArkLib.RawGS304.strictCoeffPolysLargeResidual_of_rawGSCargoProducer",
@@ -1426,7 +1616,9 @@
      "extra_explicit_binders": [
       "hInput"
      ],
-     "ambiguous_name_match": false
+     "ambiguous_name_match": false,
+     "equivalence": false,
+     "specialised_arguments": []
     },
     {
      "name": "ProximityGap.strictCoeffPolysLargeResidual_of_residual",
@@ -1439,7 +1631,9 @@
      "extra_explicit_binders": [
       "hRes"
      ],
-     "ambiguous_name_match": false
+     "ambiguous_name_match": false,
+     "equivalence": false,
+     "specialised_arguments": []
     },
     {
      "name": "ArkLib.FaithfulCurveExtraction.strictCoeffPolysLargeResidual_of_localSeriesDatumOn",
@@ -1450,7 +1644,9 @@
      "extra_explicit_binders": [
       "hInput"
      ],
-     "ambiguous_name_match": false
+     "ambiguous_name_match": false,
+     "equivalence": false,
+     "specialised_arguments": []
     },
     {
      "name": "ArkLib.UnifiedExtractionTarget.strictCoeffPolysLargeResidual_of_producer",
@@ -1461,7 +1657,9 @@
      "extra_explicit_binders": [
       "hprod"
      ],
-     "ambiguous_name_match": false
+     "ambiguous_name_match": false,
+     "equivalence": false,
+     "specialised_arguments": []
     }
    ],
    "status": "open"
@@ -1483,7 +1681,9 @@
      "extra_explicit_binders": [
       "h"
      ],
-     "ambiguous_name_match": false
+     "ambiguous_name_match": false,
+     "equivalence": false,
+     "specialised_arguments": []
     },
     {
      "name": "ProximityGap.strictCoeffPolysExcResidual_mono",
@@ -1497,7 +1697,9 @@
       "h",
       "hbb"
      ],
-     "ambiguous_name_match": false
+     "ambiguous_name_match": false,
+     "equivalence": false,
+     "specialised_arguments": []
     }
    ],
    "status": "open"
@@ -1517,7 +1719,9 @@
      "extra_explicit_binders": [
       "hSub"
      ],
-     "ambiguous_name_match": false
+     "ambiguous_name_match": false,
+     "equivalence": false,
+     "specialised_arguments": []
     },
     {
      "name": "ArkLib.BoundaryCardResidual.boundaryCardLatticeResidual_zero",
@@ -1526,7 +1730,11 @@
      "line": 395,
      "conditional_on_residuals": [],
      "extra_explicit_binders": [],
-     "ambiguous_name_match": false
+     "ambiguous_name_match": false,
+     "equivalence": false,
+     "specialised_arguments": [
+      "k := 0"
+     ]
     },
     {
      "name": "ArkLib.BoundaryCardResidual.BoundaryCardQuantizationResiduals.lattice",
@@ -1537,7 +1745,9 @@
      "extra_explicit_binders": [
       "h"
      ],
-     "ambiguous_name_match": false
+     "ambiguous_name_match": false,
+     "equivalence": false,
+     "specialised_arguments": []
     },
     {
      "name": "ArkLib.BoundaryCardResidual.BoundaryCardLatticeData.toLatticeResidual",
@@ -1548,7 +1758,9 @@
      "extra_explicit_binders": [
       "h"
      ],
-     "ambiguous_name_match": false
+     "ambiguous_name_match": false,
+     "equivalence": false,
+     "specialised_arguments": []
     },
     {
      "name": "ArkLib.BoundaryDischarge.boundaryCardLatticeResidual_of_boundary_cards_and_coeffPolys",
@@ -1559,7 +1771,9 @@
      "extra_explicit_binders": [
       "hBoundaryData"
      ],
-     "ambiguous_name_match": false
+     "ambiguous_name_match": false,
+     "equivalence": false,
+     "specialised_arguments": []
     },
     {
      "name": "ArkLib.BoundaryDischarge.boundaryCardLatticeResidual_of_lattice_data",
@@ -1570,7 +1784,9 @@
      "extra_explicit_binders": [
       "hLatticeData"
      ],
-     "ambiguous_name_match": false
+     "ambiguous_name_match": false,
+     "equivalence": false,
+     "specialised_arguments": []
     }
    ],
    "refutations": [
@@ -1584,7 +1800,7 @@
      "ambiguous_name_match": false
     }
    ],
-   "status": "discharged"
+   "status": "refuted"
   },
   {
    "name": "BoundaryCardLatticeThresholdResidual",
@@ -1601,7 +1817,9 @@
      "extra_explicit_binders": [
       "hExt"
      ],
-     "ambiguous_name_match": false
+     "ambiguous_name_match": false,
+     "equivalence": false,
+     "specialised_arguments": []
     },
     {
      "name": "ArkLib.BoundaryLatticeThresholdLeaf.boundaryCardLatticeThresholdResidual_of_canonical",
@@ -1612,7 +1830,9 @@
      "extra_explicit_binders": [
       "hCanon"
      ],
-     "ambiguous_name_match": false
+     "ambiguous_name_match": false,
+     "equivalence": false,
+     "specialised_arguments": []
     },
     {
      "name": "ArkLib.LatticeFrontierReduction.boundaryCardLatticeThresholdResidual_of_countFrontier",
@@ -1623,7 +1843,9 @@
      "extra_explicit_binders": [
       "hProd"
      ],
-     "ambiguous_name_match": false
+     "ambiguous_name_match": false,
+     "equivalence": false,
+     "specialised_arguments": []
     }
    ],
    "status": "open"
@@ -1643,7 +1865,9 @@
      "extra_explicit_binders": [
       "hk"
      ],
-     "ambiguous_name_match": false
+     "ambiguous_name_match": false,
+     "equivalence": false,
+     "specialised_arguments": []
     },
     {
      "name": "ProximityGap.Ownership.subJohnsonSupplyResidual_above_johnson",
@@ -1655,7 +1879,9 @@
       "hgap",
       "hk"
      ],
-     "ambiguous_name_match": false
+     "ambiguous_name_match": false,
+     "equivalence": false,
+     "specialised_arguments": []
     },
     {
      "name": "ProximityGap.PairRank.subJohnsonSupplyResidual_iff_forall",
@@ -1664,7 +1890,9 @@
      "line": 41,
      "conditional_on_residuals": [],
      "extra_explicit_binders": [],
-     "ambiguous_name_match": false
+     "ambiguous_name_match": false,
+     "equivalence": true,
+     "specialised_arguments": []
     },
     {
      "name": "ProximityGap.PairRank.subJohnsonSupplyResidual_iff_optimal_le",
@@ -1673,7 +1901,9 @@
      "line": 59,
      "conditional_on_residuals": [],
      "extra_explicit_binders": [],
-     "ambiguous_name_match": false
+     "ambiguous_name_match": false,
+     "equivalence": true,
+     "specialised_arguments": []
     },
     {
      "name": "ProximityGap.PairRank.cappedSupplyOptimal_is_least",
@@ -1682,7 +1912,9 @@
      "line": 145,
      "conditional_on_residuals": [],
      "extra_explicit_binders": [],
-     "ambiguous_name_match": false
+     "ambiguous_name_match": false,
+     "equivalence": false,
+     "specialised_arguments": []
     }
    ],
    "status": "discharged"
@@ -1713,7 +1945,9 @@
       "himplSP",
       "himplVB"
      ],
-     "ambiguous_name_match": false
+     "ambiguous_name_match": false,
+     "equivalence": false,
+     "specialised_arguments": []
     },
     {
      "name": "Reduction.reductionAppendCompletenessResidual_msg",
@@ -1729,7 +1963,9 @@
       "himplVB",
       "hn"
      ],
-     "ambiguous_name_match": false
+     "ambiguous_name_match": false,
+     "equivalence": false,
+     "specialised_arguments": []
     },
     {
      "name": "Reduction.reductionAppendCompletenessResidual_total_pos",
@@ -1744,7 +1980,9 @@
       "himplVB",
       "hn"
      ],
-     "ambiguous_name_match": false
+     "ambiguous_name_match": false,
+     "equivalence": false,
+     "specialised_arguments": []
     }
    ],
    "status": "open"
@@ -1768,7 +2006,9 @@
       "hInit",
       "hn"
      ],
-     "ambiguous_name_match": false
+     "ambiguous_name_match": false,
+     "equivalence": false,
+     "specialised_arguments": []
     },
     {
      "name": "Reduction.reductionAppendPerfectCompletenessResidual_msg",
@@ -1783,7 +2023,9 @@
       "hInit",
       "hn"
      ],
-     "ambiguous_name_match": false
+     "ambiguous_name_match": false,
+     "equivalence": false,
+     "specialised_arguments": []
     },
     {
      "name": "Reduction.reductionAppendPerfectCompletenessResidual_challenge",
@@ -1799,7 +2041,9 @@
       "himplSP",
       "hn"
      ],
-     "ambiguous_name_match": false
+     "ambiguous_name_match": false,
+     "equivalence": false,
+     "specialised_arguments": []
     },
     {
      "name": "Reduction.reductionAppendPerfectCompletenessResidual_holds",
@@ -1814,7 +2058,9 @@
       "himplSP",
       "hn"
      ],
-     "ambiguous_name_match": false
+     "ambiguous_name_match": false,
+     "equivalence": false,
+     "specialised_arguments": []
     },
     {
      "name": "Reduction.reductionAppendPerfectCompletenessResidual_holds",
@@ -1828,7 +2074,9 @@
       "himplNF",
       "himplSP"
      ],
-     "ambiguous_name_match": false
+     "ambiguous_name_match": false,
+     "equivalence": false,
+     "specialised_arguments": []
     }
    ],
    "status": "open"
@@ -1853,7 +2101,9 @@
       "himplVB",
       "hn"
      ],
-     "ambiguous_name_match": false
+     "ambiguous_name_match": false,
+     "equivalence": false,
+     "specialised_arguments": []
     },
     {
      "name": "Verifier.append_soundness_msg_residual",
@@ -1869,7 +2119,9 @@
       "himplVB",
       "hn"
      ],
-     "ambiguous_name_match": false
+     "ambiguous_name_match": false,
+     "equivalence": false,
+     "specialised_arguments": []
     },
     {
      "name": "Verifier.appendSoundnessResidual_total_pos",
@@ -1883,7 +2135,9 @@
       "himplVB",
       "hn"
      ],
-     "ambiguous_name_match": false
+     "ambiguous_name_match": false,
+     "equivalence": false,
+     "specialised_arguments": []
     }
    ],
    "status": "open"
@@ -1916,7 +2170,9 @@
       "hn",
       "hso"
      ],
-     "ambiguous_name_match": false
+     "ambiguous_name_match": false,
+     "equivalence": false,
+     "specialised_arguments": []
     },
     {
      "name": "Verifier.appendRbrSoundnessResidual_msg_subsingleton",
@@ -1933,7 +2189,9 @@
       "hVerify",
       "hn"
      ],
-     "ambiguous_name_match": false
+     "ambiguous_name_match": false,
+     "equivalence": false,
+     "specialised_arguments": []
     }
    ],
    "status": "open"
@@ -1959,7 +2217,9 @@
       "hn",
       "hso"
      ],
-     "ambiguous_name_match": false
+     "ambiguous_name_match": false,
+     "equivalence": false,
+     "specialised_arguments": []
     },
     {
      "name": "Verifier.appendRbrKnowledgeSoundnessResidual_msg_subsingleton",
@@ -1977,7 +2237,9 @@
       "hVerify",
       "hn"
      ],
-     "ambiguous_name_match": false
+     "ambiguous_name_match": false,
+     "equivalence": false,
+     "specialised_arguments": []
     },
     {
      "name": "Verifier.appendRbrKnowledgeSoundnessResidual_challenge_subsingleton",
@@ -1995,7 +2257,9 @@
       "hVerify",
       "hn"
      ],
-     "ambiguous_name_match": false
+     "ambiguous_name_match": false,
+     "equivalence": false,
+     "specialised_arguments": []
     },
     {
      "name": "Verifier.appendRbrKnowledgeSoundnessResidual_failingDet_subsingleton",
@@ -2011,7 +2275,9 @@
       "hNEW₂",
       "hn"
      ],
-     "ambiguous_name_match": false
+     "ambiguous_name_match": false,
+     "equivalence": false,
+     "specialised_arguments": []
     },
     {
      "name": "Verifier.appendRbrKnowledgeSoundnessResidual_failingDet_empty",
@@ -2023,7 +2289,9 @@
       "hInit",
       "hNEW₂"
      ],
-     "ambiguous_name_match": false
+     "ambiguous_name_match": false,
+     "equivalence": false,
+     "specialised_arguments": []
     }
    ],
    "status": "open"
@@ -2046,7 +2314,9 @@
       "himplSP",
       "himplVB"
      ],
-     "ambiguous_name_match": false
+     "ambiguous_name_match": false,
+     "equivalence": false,
+     "specialised_arguments": []
     },
     {
      "name": "OracleReduction.appendCompletenessResidual_msg",
@@ -2062,7 +2332,9 @@
       "himplVB",
       "hn"
      ],
-     "ambiguous_name_match": false
+     "ambiguous_name_match": false,
+     "equivalence": false,
+     "specialised_arguments": []
     }
    ],
    "status": "open"
@@ -2085,7 +2357,9 @@
       "himplNF",
       "himplSP"
      ],
-     "ambiguous_name_match": false
+     "ambiguous_name_match": false,
+     "equivalence": false,
+     "specialised_arguments": []
     },
     {
      "name": "OracleReduction.appendPerfectCompletenessResidual_msg",
@@ -2100,7 +2374,9 @@
       "hInit",
       "hn"
      ],
-     "ambiguous_name_match": false
+     "ambiguous_name_match": false,
+     "equivalence": false,
+     "specialised_arguments": []
     }
    ],
    "status": "open"
@@ -2125,7 +2401,9 @@
       "himplVB",
       "hn"
      ],
-     "ambiguous_name_match": false
+     "ambiguous_name_match": false,
+     "equivalence": false,
+     "specialised_arguments": []
     },
     {
      "name": "OracleVerifier.appendSoundnessResidual_challenge",
@@ -2141,7 +2419,9 @@
       "himplVB",
       "hn"
      ],
-     "ambiguous_name_match": false
+     "ambiguous_name_match": false,
+     "equivalence": false,
+     "specialised_arguments": []
     },
     {
      "name": "OracleVerifier.appendSoundnessResidual_total_pos",
@@ -2155,7 +2435,9 @@
       "himplVB",
       "hn"
      ],
-     "ambiguous_name_match": false
+     "ambiguous_name_match": false,
+     "equivalence": false,
+     "specialised_arguments": []
     },
     {
      "name": "OracleVerifier.oracleAppendSoundnessResidual_of_plain",
@@ -2166,7 +2448,9 @@
      "extra_explicit_binders": [
       "hPlainAppend"
      ],
-     "ambiguous_name_match": false
+     "ambiguous_name_match": false,
+     "equivalence": false,
+     "specialised_arguments": []
     },
     {
      "name": "Logup.logupAppendSoundnessResidual_of_plain",
@@ -2177,7 +2461,9 @@
      "extra_explicit_binders": [
       "hPlainAppend"
      ],
-     "ambiguous_name_match": false
+     "ambiguous_name_match": false,
+     "equivalence": false,
+     "specialised_arguments": []
     }
    ],
    "status": "open"
@@ -2199,7 +2485,9 @@
      "extra_explicit_binders": [
       "hPlain"
      ],
-     "ambiguous_name_match": false
+     "ambiguous_name_match": false,
+     "equivalence": false,
+     "specialised_arguments": []
     }
    ],
    "status": "open"
@@ -2225,7 +2513,9 @@
       "hVerify",
       "hn"
      ],
-     "ambiguous_name_match": false
+     "ambiguous_name_match": false,
+     "equivalence": false,
+     "specialised_arguments": []
     }
    ],
    "status": "open"
@@ -2252,7 +2542,9 @@
       "hVerify",
       "hn"
      ],
-     "ambiguous_name_match": false
+     "ambiguous_name_match": false,
+     "equivalence": false,
+     "specialised_arguments": []
     }
    ],
    "status": "open"
@@ -2274,7 +2566,9 @@
       "hDir₂",
       "hn"
      ],
-     "ambiguous_name_match": false
+     "ambiguous_name_match": false,
+     "equivalence": false,
+     "specialised_arguments": []
     },
     {
      "name": "Prover.appendRunRightResidual_of_append_run",
@@ -2285,7 +2579,9 @@
      "extra_explicit_binders": [
       "hRun"
      ],
-     "ambiguous_name_match": false
+     "ambiguous_name_match": false,
+     "equivalence": false,
+     "specialised_arguments": []
     },
     {
      "name": "Prover.appendRunRightResidual_iff_append_run",
@@ -2294,7 +2590,9 @@
      "line": 4057,
      "conditional_on_residuals": [],
      "extra_explicit_binders": [],
-     "ambiguous_name_match": false
+     "ambiguous_name_match": false,
+     "equivalence": true,
+     "specialised_arguments": []
     },
     {
      "name": "Prover.appendRunRightResidual_holds_empty",
@@ -2303,7 +2601,9 @@
      "line": 84,
      "conditional_on_residuals": [],
      "extra_explicit_binders": [],
-     "ambiguous_name_match": false
+     "ambiguous_name_match": false,
+     "equivalence": false,
+     "specialised_arguments": []
     }
    ],
    "status": "discharged"
@@ -2321,7 +2621,9 @@
      "line": 167,
      "conditional_on_residuals": [],
      "extra_explicit_binders": [],
-     "ambiguous_name_match": false
+     "ambiguous_name_match": false,
+     "equivalence": false,
+     "specialised_arguments": []
     },
     {
      "name": "OracleReduction.appendToReductionResidual_iff_verifier",
@@ -2330,7 +2632,9 @@
      "line": 122,
      "conditional_on_residuals": [],
      "extra_explicit_binders": [],
-     "ambiguous_name_match": false
+     "ambiguous_name_match": false,
+     "equivalence": true,
+     "specialised_arguments": []
     }
    ],
    "status": "discharged"
@@ -2354,7 +2658,9 @@
       "hS₂",
       "hn"
      ],
-     "ambiguous_name_match": false
+     "ambiguous_name_match": false,
+     "equivalence": false,
+     "specialised_arguments": []
     }
    ],
    "status": "open"
@@ -2381,7 +2687,9 @@
       "hNE₂",
       "hn"
      ],
-     "ambiguous_name_match": false
+     "ambiguous_name_match": false,
+     "equivalence": false,
+     "specialised_arguments": []
     },
     {
      "name": "Verifier.appendRbrKnowledgeSoundnessPerRound",
@@ -2397,7 +2705,9 @@
       "hNE₂",
       "hPhase2"
      ],
-     "ambiguous_name_match": false
+     "ambiguous_name_match": false,
+     "equivalence": false,
+     "specialised_arguments": []
     }
    ],
    "status": "open"
@@ -2423,7 +2733,9 @@
       "hReconcilePos",
       "hn"
      ],
-     "ambiguous_name_match": false
+     "ambiguous_name_match": false,
+     "equivalence": false,
+     "specialised_arguments": []
     },
     {
      "name": "Verifier.appendRbrKnowledgeSoundnessPhase2_subsingleton",
@@ -2440,7 +2752,9 @@
       "hReconcile",
       "hn"
      ],
-     "ambiguous_name_match": false
+     "ambiguous_name_match": false,
+     "equivalence": false,
+     "specialised_arguments": []
     }
    ],
    "status": "open"
@@ -2462,7 +2776,9 @@
       "hDir₂",
       "hn"
      ],
-     "ambiguous_name_match": false
+     "ambiguous_name_match": false,
+     "equivalence": false,
+     "specialised_arguments": []
     },
     {
      "name": "Prover.appendRunRightDistResidual_holds_challenge",
@@ -2475,7 +2791,9 @@
       "hDir₂",
       "hn"
      ],
-     "ambiguous_name_match": false
+     "ambiguous_name_match": false,
+     "equivalence": false,
+     "specialised_arguments": []
     },
     {
      "name": "Prover.appendRunRightDistResidual_holds",
@@ -2484,7 +2802,9 @@
      "line": 495,
      "conditional_on_residuals": [],
      "extra_explicit_binders": [],
-     "ambiguous_name_match": false
+     "ambiguous_name_match": false,
+     "equivalence": false,
+     "specialised_arguments": []
     }
    ],
    "status": "discharged"
@@ -2504,7 +2824,9 @@
      "extra_explicit_binders": [
       "hRun"
      ],
-     "ambiguous_name_match": false
+     "ambiguous_name_match": false,
+     "equivalence": false,
+     "specialised_arguments": []
     },
     {
      "name": "Reduction.fiatShamir_runCollapse",
@@ -2513,7 +2835,9 @@
      "line": 145,
      "conditional_on_residuals": [],
      "extra_explicit_binders": [],
-     "ambiguous_name_match": false
+     "ambiguous_name_match": false,
+     "equivalence": false,
+     "specialised_arguments": []
     },
     {
      "name": "Issue116.fiatShamir_runCollapse_of_runEq",
@@ -2524,7 +2848,9 @@
      "extra_explicit_binders": [
       "hRunEq"
      ],
-     "ambiguous_name_match": false
+     "ambiguous_name_match": false,
+     "equivalence": false,
+     "specialised_arguments": []
     },
     {
      "name": "Reduction.fiatShamir_runCollapseResidual_holds",
@@ -2533,7 +2859,9 @@
      "line": 155,
      "conditional_on_residuals": [],
      "extra_explicit_binders": [],
-     "ambiguous_name_match": false
+     "ambiguous_name_match": false,
+     "equivalence": false,
+     "specialised_arguments": []
     },
     {
      "name": "FiatShamirCollapse.fiat_shamir_collapse_breakthrough",
@@ -2542,7 +2870,9 @@
      "line": 34,
      "conditional_on_residuals": [],
      "extra_explicit_binders": [],
-     "ambiguous_name_match": false
+     "ambiguous_name_match": false,
+     "equivalence": false,
+     "specialised_arguments": []
     }
    ],
    "status": "discharged"
@@ -2560,7 +2890,9 @@
      "line": 899,
      "conditional_on_residuals": [],
      "extra_explicit_binders": [],
-     "ambiguous_name_match": false
+     "ambiguous_name_match": false,
+     "equivalence": false,
+     "specialised_arguments": []
     }
    ],
    "status": "discharged"
@@ -2578,7 +2910,9 @@
      "line": 3301,
      "conditional_on_residuals": [],
      "extra_explicit_binders": [],
-     "ambiguous_name_match": false
+     "ambiguous_name_match": false,
+     "equivalence": false,
+     "specialised_arguments": []
     }
    ],
    "status": "discharged"
@@ -2601,7 +2935,9 @@
       "hTransfer",
       "hle"
      ],
-     "ambiguous_name_match": false
+     "ambiguous_name_match": false,
+     "equivalence": false,
+     "specialised_arguments": []
     },
     {
      "name": "Reduction.fiatShamir_statisticalHVZKTransferResidual.of_zero",
@@ -2614,7 +2950,9 @@
      "extra_explicit_binders": [
       "hTransfer"
      ],
-     "ambiguous_name_match": false
+     "ambiguous_name_match": false,
+     "equivalence": false,
+     "specialised_arguments": []
     },
     {
      "name": "Reduction.fiatShamir_statisticalHVZKTransferResidual.of_perfectTransfer",
@@ -2627,7 +2965,9 @@
      "extra_explicit_binders": [
       "hTransfer"
      ],
-     "ambiguous_name_match": false
+     "ambiguous_name_match": false,
+     "equivalence": false,
+     "specialised_arguments": []
     },
     {
      "name": "Reduction.fiatShamir_statisticalHVZKTransferResidual_canonical_proved",
@@ -2636,7 +2976,9 @@
      "line": 79,
      "conditional_on_residuals": [],
      "extra_explicit_binders": [],
-     "ambiguous_name_match": false
+     "ambiguous_name_match": false,
+     "equivalence": false,
+     "specialised_arguments": []
     },
     {
      "name": "Reduction.fiatShamir_statisticalHVZKTransferResidual_zero_of_hvzkTransferResidual",
@@ -2649,7 +2991,9 @@
      "extra_explicit_binders": [
       "hPerf"
      ],
-     "ambiguous_name_match": false
+     "ambiguous_name_match": false,
+     "equivalence": false,
+     "specialised_arguments": []
     }
    ],
    "status": "discharged"
@@ -2671,7 +3015,9 @@
      "extra_explicit_binders": [
       "hTransfer"
      ],
-     "ambiguous_name_match": false
+     "ambiguous_name_match": false,
+     "equivalence": false,
+     "specialised_arguments": []
     },
     {
      "name": "Reduction.fiatShamir_hvzkTransferResidual_iff_statistical_zero",
@@ -2680,7 +3026,9 @@
      "line": 1332,
      "conditional_on_residuals": [],
      "extra_explicit_binders": [],
-     "ambiguous_name_match": false
+     "ambiguous_name_match": false,
+     "equivalence": true,
+     "specialised_arguments": []
     },
     {
      "name": "Reduction.fiatShamir_hvzkTransferResidual_canonical_proved",
@@ -2689,7 +3037,9 @@
      "line": 1080,
      "conditional_on_residuals": [],
      "extra_explicit_binders": [],
-     "ambiguous_name_match": false
+     "ambiguous_name_match": false,
+     "equivalence": false,
+     "specialised_arguments": []
     },
     {
      "name": "Reduction.fiatShamir_hvzkTransfer_of_coupling",
@@ -2698,7 +3048,9 @@
      "line": 103,
      "conditional_on_residuals": [],
      "extra_explicit_binders": [],
-     "ambiguous_name_match": false
+     "ambiguous_name_match": false,
+     "equivalence": false,
+     "specialised_arguments": []
     },
     {
      "name": "Reduction.fiatShamir_hvzkTransferResidual_canonical",
@@ -2709,7 +3061,9 @@
      "extra_explicit_binders": [
       "hKernel"
      ],
-     "ambiguous_name_match": false
+     "ambiguous_name_match": false,
+     "equivalence": false,
+     "specialised_arguments": []
     },
     {
      "name": "Reduction.fiatShamir_hvzkTransferResidual_canonical_of_perStateCoupling",
@@ -2720,7 +3074,9 @@
      "extra_explicit_binders": [
       "hCoupling"
      ],
-     "ambiguous_name_match": false
+     "ambiguous_name_match": false,
+     "equivalence": false,
+     "specialised_arguments": []
     },
     {
      "name": "Reduction.fiatShamir_hvzkTransferResidual_of_statisticalHVZKTransferResidual_zero",
@@ -2733,7 +3089,9 @@
      "extra_explicit_binders": [
       "hStat"
      ],
-     "ambiguous_name_match": false
+     "ambiguous_name_match": false,
+     "equivalence": false,
+     "specialised_arguments": []
     },
     {
      "name": "Reduction.fiatShamir_hvzkTransferResidual_iff_statisticalHVZKTransferResidual_zero",
@@ -2742,7 +3100,9 @@
      "line": 81,
      "conditional_on_residuals": [],
      "extra_explicit_binders": [],
-     "ambiguous_name_match": false
+     "ambiguous_name_match": false,
+     "equivalence": true,
+     "specialised_arguments": []
     }
    ],
    "status": "discharged"
@@ -2762,7 +3122,9 @@
      "extra_explicit_binders": [
       "h"
      ],
-     "ambiguous_name_match": false
+     "ambiguous_name_match": false,
+     "equivalence": false,
+     "specialised_arguments": []
     },
     {
      "name": "DuplexSpongeFS.BirthdayBoundPaper.lemma5_8EagerPaperResidual_holds",
@@ -2771,7 +3133,9 @@
      "line": 46,
      "conditional_on_residuals": [],
      "extra_explicit_binders": [],
-     "ambiguous_name_match": false
+     "ambiguous_name_match": false,
+     "equivalence": false,
+     "specialised_arguments": []
     },
     {
      "name": "DuplexSpongeFS.BirthdayBoundPaper.lemma5_8EagerPaperResidual_holds",
@@ -2780,7 +3144,9 @@
      "line": 46,
      "conditional_on_residuals": [],
      "extra_explicit_binders": [],
-     "ambiguous_name_match": false
+     "ambiguous_name_match": false,
+     "equivalence": false,
+     "specialised_arguments": []
     }
    ],
    "status": "discharged"
@@ -2798,7 +3164,9 @@
      "line": 55,
      "conditional_on_residuals": [],
      "extra_explicit_binders": [],
-     "ambiguous_name_match": false
+     "ambiguous_name_match": false,
+     "equivalence": false,
+     "specialised_arguments": []
     },
     {
      "name": "Reduction.duplexSpongeFiatShamir_runCollapseResidual_holds",
@@ -2807,7 +3175,9 @@
      "line": 417,
      "conditional_on_residuals": [],
      "extra_explicit_binders": [],
-     "ambiguous_name_match": false
+     "ambiguous_name_match": false,
+     "equivalence": false,
+     "specialised_arguments": []
     }
    ],
    "status": "discharged"
@@ -2825,7 +3195,9 @@
      "line": 90,
      "conditional_on_residuals": [],
      "extra_explicit_binders": [],
-     "ambiguous_name_match": false
+     "ambiguous_name_match": false,
+     "equivalence": false,
+     "specialised_arguments": []
     }
    ],
    "status": "discharged"
@@ -2843,7 +3215,9 @@
      "line": 246,
      "conditional_on_residuals": [],
      "extra_explicit_binders": [],
-     "ambiguous_name_match": false
+     "ambiguous_name_match": false,
+     "equivalence": false,
+     "specialised_arguments": []
     }
    ],
    "status": "discharged"
@@ -2869,7 +3243,9 @@
      "line": 1870,
      "conditional_on_residuals": [],
      "extra_explicit_binders": [],
-     "ambiguous_name_match": false
+     "ambiguous_name_match": false,
+     "equivalence": false,
+     "specialised_arguments": []
     }
    ],
    "status": "discharged"
@@ -2887,7 +3263,9 @@
      "line": 670,
      "conditional_on_residuals": [],
      "extra_explicit_binders": [],
-     "ambiguous_name_match": false
+     "ambiguous_name_match": false,
+     "equivalence": false,
+     "specialised_arguments": []
     }
    ],
    "status": "discharged"
@@ -2905,7 +3283,9 @@
      "line": 741,
      "conditional_on_residuals": [],
      "extra_explicit_binders": [],
-     "ambiguous_name_match": false
+     "ambiguous_name_match": false,
+     "equivalence": false,
+     "specialised_arguments": []
     }
    ],
    "status": "discharged"
@@ -2933,7 +3313,9 @@
       "h23",
       "h34"
      ],
-     "ambiguous_name_match": false
+     "ambiguous_name_match": false,
+     "equivalence": false,
+     "specialised_arguments": []
     },
     {
      "name": "DuplexSpongeFS.KeyLemmaAssembly.keyLemmaEager_of_steps_strictSplit",
@@ -2953,7 +3335,9 @@
       "hB",
       "hsum"
      ],
-     "ambiguous_name_match": false
+     "ambiguous_name_match": false,
+     "equivalence": false,
+     "specialised_arguments": []
     },
     {
      "name": "DuplexSpongeFS.KeyLemmaHybrids.keyLemmaEager_of_steps",
@@ -2976,7 +3360,9 @@
       "hM1c",
       "hM1d"
      ],
-     "ambiguous_name_match": false
+     "ambiguous_name_match": false,
+     "equivalence": false,
+     "specialised_arguments": []
     }
    ],
    "status": "open"
@@ -2994,7 +3380,9 @@
      "line": 394,
      "conditional_on_residuals": [],
      "extra_explicit_binders": [],
-     "ambiguous_name_match": false
+     "ambiguous_name_match": false,
+     "equivalence": false,
+     "specialised_arguments": []
     }
    ],
    "status": "discharged"
@@ -3012,7 +3400,9 @@
      "line": 513,
      "conditional_on_residuals": [],
      "extra_explicit_binders": [],
-     "ambiguous_name_match": false
+     "ambiguous_name_match": false,
+     "equivalence": false,
+     "specialised_arguments": []
     }
    ],
    "status": "discharged"
@@ -3058,7 +3448,9 @@
       "hB",
       "hsum"
      ],
-     "ambiguous_name_match": false
+     "ambiguous_name_match": false,
+     "equivalence": false,
+     "specialised_arguments": []
     }
    ],
    "refutations": [
@@ -3099,7 +3491,9 @@
       "h23",
       "h34"
      ],
-     "ambiguous_name_match": false
+     "ambiguous_name_match": false,
+     "equivalence": false,
+     "specialised_arguments": []
     }
    ],
    "status": "open"
@@ -3120,7 +3514,9 @@
       "hInit",
       "hSum"
      ],
-     "ambiguous_name_match": false
+     "ambiguous_name_match": false,
+     "equivalence": false,
+     "specialised_arguments": []
     },
     {
      "name": "Logup.subPhaseCompletenessResidual_iff_split",
@@ -3129,7 +3525,9 @@
      "line": 174,
      "conditional_on_residuals": [],
      "extra_explicit_binders": [],
-     "ambiguous_name_match": false
+     "ambiguous_name_match": false,
+     "equivalence": true,
+     "specialised_arguments": []
     },
     {
      "name": "Logup.subPhaseCompletenessResidual_unconditional",
@@ -3141,10 +3539,12 @@
       "hImplSupp",
       "hInit"
      ],
-     "ambiguous_name_match": false
+     "ambiguous_name_match": false,
+     "equivalence": false,
+     "specialised_arguments": []
     }
    ],
-   "status": "discharged"
+   "status": "open"
   },
   {
    "name": "OuterCompletenessRunResidual",
@@ -3159,7 +3559,9 @@
      "line": 829,
      "conditional_on_residuals": [],
      "extra_explicit_binders": [],
-     "ambiguous_name_match": false
+     "ambiguous_name_match": false,
+     "equivalence": false,
+     "specialised_arguments": []
     },
     {
      "name": "Logup.outerCompletenessRunResidual_iff",
@@ -3168,7 +3570,9 @@
      "line": 845,
      "conditional_on_residuals": [],
      "extra_explicit_binders": [],
-     "ambiguous_name_match": false
+     "ambiguous_name_match": false,
+     "equivalence": true,
+     "specialised_arguments": []
     }
    ],
    "status": "discharged"
@@ -3186,7 +3590,9 @@
      "line": 811,
      "conditional_on_residuals": [],
      "extra_explicit_binders": [],
-     "ambiguous_name_match": false
+     "ambiguous_name_match": false,
+     "equivalence": false,
+     "specialised_arguments": []
     }
    ],
    "status": "discharged"
@@ -3211,7 +3617,9 @@
       "hnK",
       "hpole"
      ],
-     "ambiguous_name_match": false
+     "ambiguous_name_match": false,
+     "equivalence": false,
+     "specialised_arguments": []
     },
     {
      "name": "Logup.subPhaseSoundnessResidual_iff_split",
@@ -3220,10 +3628,12 @@
      "line": 83,
      "conditional_on_residuals": [],
      "extra_explicit_binders": [],
-     "ambiguous_name_match": false
+     "ambiguous_name_match": false,
+     "equivalence": true,
+     "specialised_arguments": []
     }
    ],
-   "status": "discharged"
+   "status": "open"
   },
   {
    "name": "OuterSoundnessResidual",
@@ -3244,7 +3654,9 @@
       "hnK",
       "hpole"
      ],
-     "ambiguous_name_match": false
+     "ambiguous_name_match": false,
+     "equivalence": false,
+     "specialised_arguments": []
     }
    ],
    "status": "open"
@@ -3268,7 +3680,9 @@
       "himplSP",
       "himplVB"
      ],
-     "ambiguous_name_match": false
+     "ambiguous_name_match": false,
+     "equivalence": false,
+     "specialised_arguments": []
     },
     {
      "name": "Logup.sumcheckSoundnessResidual_holds_pointwise",
@@ -3282,7 +3696,9 @@
       "himplVB",
       "hn"
      ],
-     "ambiguous_name_match": false
+     "ambiguous_name_match": false,
+     "equivalence": false,
+     "specialised_arguments": []
     },
     {
      "name": "Logup.sumcheckSoundnessResidual_holds_of_rbr",
@@ -3296,7 +3712,9 @@
       "hMarginal",
       "hProj"
      ],
-     "ambiguous_name_match": false
+     "ambiguous_name_match": false,
+     "equivalence": false,
+     "specialised_arguments": []
     },
     {
      "name": "Logup.sumcheckSoundnessResidual_proved",
@@ -3310,7 +3728,9 @@
       "hMarginal",
       "hProj"
      ],
-     "ambiguous_name_match": false
+     "ambiguous_name_match": false,
+     "equivalence": false,
+     "specialised_arguments": []
     },
     {
      "name": "Logup.sumcheckSoundnessResidual_holds",
@@ -3323,7 +3743,9 @@
       "hProj",
       "hRbrToSound"
      ],
-     "ambiguous_name_match": false
+     "ambiguous_name_match": false,
+     "equivalence": false,
+     "specialised_arguments": []
     },
     {
      "name": "Logup.sumcheckSoundnessResidual_pointwise",
@@ -3337,7 +3759,9 @@
       "himplVB",
       "hn"
      ],
-     "ambiguous_name_match": false
+     "ambiguous_name_match": false,
+     "equivalence": false,
+     "specialised_arguments": []
     },
     {
      "name": "Logup.sumcheckSoundnessResidual_holds_projClosed",
@@ -3352,7 +3776,9 @@
       "himplSP",
       "himplVB"
      ],
-     "ambiguous_name_match": false
+     "ambiguous_name_match": false,
+     "equivalence": false,
+     "specialised_arguments": []
     },
     {
      "name": "Logup.sumcheckSoundnessResidual_holds_wired",
@@ -3368,7 +3794,9 @@
       "himplSP",
       "himplVB"
      ],
-     "ambiguous_name_match": false
+     "ambiguous_name_match": false,
+     "equivalence": false,
+     "specialised_arguments": []
     }
    ],
    "status": "open"
@@ -3393,7 +3821,9 @@
       "hnK",
       "hpole"
      ],
-     "ambiguous_name_match": false
+     "ambiguous_name_match": false,
+     "equivalence": false,
+     "specialised_arguments": []
     }
    ],
    "status": "open"
@@ -3418,7 +3848,9 @@
       "hnK",
       "hpole"
      ],
-     "ambiguous_name_match": false
+     "ambiguous_name_match": false,
+     "equivalence": false,
+     "specialised_arguments": []
     },
     {
      "name": "Logup.logupSoundnessBrickResidual_iff_subPhase_append",
@@ -3427,10 +3859,12 @@
      "line": 122,
      "conditional_on_residuals": [],
      "extra_explicit_binders": [],
-     "ambiguous_name_match": false
+     "ambiguous_name_match": false,
+     "equivalence": true,
+     "specialised_arguments": []
     }
    ],
-   "status": "discharged"
+   "status": "open"
   },
   {
    "name": "OuterCompletenessResidual",
@@ -3447,7 +3881,9 @@
      "extra_explicit_binders": [
       "hInit"
      ],
-     "ambiguous_name_match": false
+     "ambiguous_name_match": false,
+     "equivalence": false,
+     "specialised_arguments": []
     },
     {
      "name": "Logup.outerCompletenessResidual_of_neverFail",
@@ -3458,7 +3894,9 @@
      "extra_explicit_binders": [
       "hInit"
      ],
-     "ambiguous_name_match": false
+     "ambiguous_name_match": false,
+     "equivalence": false,
+     "specialised_arguments": []
     }
    ],
    "status": "open"
@@ -3480,7 +3918,9 @@
       "hInit",
       "hPerRound"
      ],
-     "ambiguous_name_match": false
+     "ambiguous_name_match": false,
+     "equivalence": false,
+     "specialised_arguments": []
     },
     {
      "name": "Logup.sumcheckCompletenessResidual_proved",
@@ -3493,7 +3933,9 @@
       "hInit",
       "hPerRound"
      ],
-     "ambiguous_name_match": false
+     "ambiguous_name_match": false,
+     "equivalence": false,
+     "specialised_arguments": []
     },
     {
      "name": "Logup.sumcheckCompletenessResidual_holds",
@@ -3505,7 +3947,9 @@
       "hInner",
       "hProj"
      ],
-     "ambiguous_name_match": false
+     "ambiguous_name_match": false,
+     "equivalence": false,
+     "specialised_arguments": []
     },
     {
      "name": "Logup.sumcheckCompletenessResidual_unconditional",
@@ -3517,7 +3961,9 @@
       "hImplSupp",
       "hInit"
      ],
-     "ambiguous_name_match": false
+     "ambiguous_name_match": false,
+     "equivalence": false,
+     "specialised_arguments": []
     },
     {
      "name": "Logup.sumcheckCompletenessResidual_of_inner",
@@ -3528,7 +3974,9 @@
      "extra_explicit_binders": [
       "hInner"
      ],
-     "ambiguous_name_match": false
+     "ambiguous_name_match": false,
+     "equivalence": false,
+     "specialised_arguments": []
     }
    ],
    "status": "open"
@@ -3552,7 +4000,9 @@
      "extra_explicit_binders": [
       "hBridge"
      ],
-     "ambiguous_name_match": false
+     "ambiguous_name_match": false,
+     "equivalence": true,
+     "specialised_arguments": []
     },
     {
      "name": "Logup.appendCompletenessResidual_msgSeam",
@@ -3569,7 +4019,9 @@
       "himplVB",
       "hn"
      ],
-     "ambiguous_name_match": false
+     "ambiguous_name_match": false,
+     "equivalence": false,
+     "specialised_arguments": []
     },
     {
      "name": "Logup.appendCompletenessResidual_wired",
@@ -3587,7 +4039,9 @@
       "himplVB",
       "hn"
      ],
-     "ambiguous_name_match": false
+     "ambiguous_name_match": false,
+     "equivalence": false,
+     "specialised_arguments": []
     },
     {
      "name": "Logup.appendCompletenessResidual_unconditional",
@@ -3601,7 +4055,9 @@
       "himplVB",
       "hn"
      ],
-     "ambiguous_name_match": false
+     "ambiguous_name_match": false,
+     "equivalence": false,
+     "specialised_arguments": []
     },
     {
      "name": "Logup.appendCompletenessResidual_forall",
@@ -3620,7 +4076,9 @@
       "himplVB",
       "hn"
      ],
-     "ambiguous_name_match": false
+     "ambiguous_name_match": false,
+     "equivalence": false,
+     "specialised_arguments": []
     }
    ],
    "status": "open"
@@ -3645,7 +4103,9 @@
       "himplVB",
       "hn"
      ],
-     "ambiguous_name_match": false
+     "ambiguous_name_match": false,
+     "equivalence": false,
+     "specialised_arguments": []
     },
     {
      "name": "Logup.logupCompletenessBrickResidual_iff_subPhase_append",
@@ -3654,10 +4114,12 @@
      "line": 213,
      "conditional_on_residuals": [],
      "extra_explicit_binders": [],
-     "ambiguous_name_match": false
+     "ambiguous_name_match": false,
+     "equivalence": true,
+     "specialised_arguments": []
     }
    ],
-   "status": "discharged"
+   "status": "open"
   },
   {
    "name": "stirCheckingRbrSoundnessResidual",
@@ -3678,7 +4140,9 @@
       "hCA",
       "hPR"
      ],
-     "ambiguous_name_match": false
+     "ambiguous_name_match": false,
+     "equivalence": false,
+     "specialised_arguments": []
     },
     {
      "name": "StirIOP.MultiRound.stirCheckingRbrSoundness_of_card_le",
@@ -3691,7 +4155,9 @@
       "hq",
       "hδ"
      ],
-     "ambiguous_name_match": false
+     "ambiguous_name_match": false,
+     "equivalence": false,
+     "specialised_arguments": []
     },
     {
      "name": "StirIOP.MultiRound.stirCheckingRbrSoundness_of_card_le_e7",
@@ -3703,7 +4169,9 @@
       "hBridge",
       "hq"
      ],
-     "ambiguous_name_match": false
+     "ambiguous_name_match": false,
+     "equivalence": false,
+     "specialised_arguments": []
     },
     {
      "name": "StirIOP.MultiRound.stirCheckingRbrSoundness_of_large",
@@ -3717,7 +4185,9 @@
       "hBridge",
       "hLarge"
      ],
-     "ambiguous_name_match": false
+     "ambiguous_name_match": false,
+     "equivalence": false,
+     "specialised_arguments": []
     },
     {
      "name": "StirIOP.MultiRound.stirCheckingRbrSoundness_of_one_le_first",
@@ -3728,7 +4198,9 @@
      "extra_explicit_binders": [
       "h1"
      ],
-     "ambiguous_name_match": false
+     "ambiguous_name_match": false,
+     "equivalence": false,
+     "specialised_arguments": []
     },
     {
      "name": "StirIOP.MultiRound.stirCheckingRbrSoundness_of_small_field",
@@ -3741,7 +4213,9 @@
       "hδ",
       "hε"
      ],
-     "ambiguous_name_match": false
+     "ambiguous_name_match": false,
+     "equivalence": false,
+     "specialised_arguments": []
     },
     {
      "name": "StirIOP.MultiRound.stirCheckingRbrSoundness_mono",
@@ -3755,7 +4229,9 @@
       "h",
       "hle"
      ],
-     "ambiguous_name_match": false
+     "ambiguous_name_match": false,
+     "equivalence": false,
+     "specialised_arguments": []
     },
     {
      "name": "StirIOP.MultiRound.stirCheckingRbrSoundness_of_epsStar_le",
@@ -3766,7 +4242,9 @@
      "extra_explicit_binders": [
       "hle"
      ],
-     "ambiguous_name_match": false
+     "ambiguous_name_match": false,
+     "equivalence": false,
+     "specialised_arguments": []
     },
     {
      "name": "StirIOP.MultiRound.stirCheckingRbrSoundness_genuine",
@@ -3775,7 +4253,9 @@
      "line": 873,
      "conditional_on_residuals": [],
      "extra_explicit_binders": [],
-     "ambiguous_name_match": false
+     "ambiguous_name_match": false,
+     "equivalence": false,
+     "specialised_arguments": []
     }
    ],
    "status": "discharged"
@@ -3798,7 +4278,9 @@
       "h",
       "hle"
      ],
-     "ambiguous_name_match": false
+     "ambiguous_name_match": false,
+     "equivalence": false,
+     "specialised_arguments": []
     },
     {
      "name": "StirIOP.MultiRound.stirMultiRoundRbrSoundness_of_indicator_le",
@@ -3809,7 +4291,9 @@
      "extra_explicit_binders": [
       "hle"
      ],
-     "ambiguous_name_match": false
+     "ambiguous_name_match": false,
+     "equivalence": false,
+     "specialised_arguments": []
     },
     {
      "name": "StirIOP.MultiRound.stirMultiRoundRbrSoundness_indicator",
@@ -3818,7 +4302,9 @@
      "line": 57,
      "conditional_on_residuals": [],
      "extra_explicit_binders": [],
-     "ambiguous_name_match": false
+     "ambiguous_name_match": false,
+     "equivalence": false,
+     "specialised_arguments": []
     }
    ],
    "status": "discharged"
@@ -3836,7 +4322,9 @@
      "line": 35,
      "conditional_on_residuals": [],
      "extra_explicit_binders": [],
-     "ambiguous_name_match": false
+     "ambiguous_name_match": false,
+     "equivalence": false,
+     "specialised_arguments": []
     }
    ],
    "status": "discharged"
@@ -3857,7 +4345,9 @@
       "hjf",
       "hδ0"
      ],
-     "ambiguous_name_match": false
+     "ambiguous_name_match": false,
+     "equivalence": false,
+     "specialised_arguments": []
     },
     {
      "name": "CodingTheory.CS25.DeepHole.deepHoleProbResidual_holds",
@@ -3869,7 +4359,9 @@
       "hkS",
       "hδ0"
      ],
-     "ambiguous_name_match": false
+     "ambiguous_name_match": false,
+     "equivalence": false,
+     "specialised_arguments": []
     }
    ],
    "refutations": [
@@ -3898,7 +4390,9 @@
      "line": 137,
      "conditional_on_residuals": [],
      "extra_explicit_binders": [],
-     "ambiguous_name_match": false
+     "ambiguous_name_match": false,
+     "equivalence": false,
+     "specialised_arguments": []
     }
    ],
    "status": "discharged"
@@ -3916,7 +4410,9 @@
      "line": 125,
      "conditional_on_residuals": [],
      "extra_explicit_binders": [],
-     "ambiguous_name_match": false
+     "ambiguous_name_match": false,
+     "equivalence": false,
+     "specialised_arguments": []
     }
    ],
    "status": "discharged"
@@ -3934,7 +4430,9 @@
      "line": 133,
      "conditional_on_residuals": [],
      "extra_explicit_binders": [],
-     "ambiguous_name_match": false
+     "ambiguous_name_match": false,
+     "equivalence": false,
+     "specialised_arguments": []
     }
    ],
    "status": "discharged"
@@ -3952,7 +4450,9 @@
      "line": 482,
      "conditional_on_residuals": [],
      "extra_explicit_binders": [],
-     "ambiguous_name_match": false
+     "ambiguous_name_match": false,
+     "equivalence": false,
+     "specialised_arguments": []
     },
     {
      "name": "Spartan.Spec.Bricks.secondSumcheckTerminalEndpointResidual_of_finalCheckWithClaimValueRelResidual",
@@ -3965,7 +4465,9 @@
      "extra_explicit_binders": [
       "hRel"
      ],
-     "ambiguous_name_match": false
+     "ambiguous_name_match": false,
+     "equivalence": false,
+     "specialised_arguments": []
     }
    ],
    "status": "discharged"
@@ -3983,7 +4485,9 @@
      "line": 685,
      "conditional_on_residuals": [],
      "extra_explicit_binders": [],
-     "ambiguous_name_match": false
+     "ambiguous_name_match": false,
+     "equivalence": false,
+     "specialised_arguments": []
     },
     {
      "name": "Spartan.Spec.Bricks.finalCheckWithClaimValueRelResidual_of_secondSumcheckTerminalEndpointResidual",
@@ -3996,7 +4500,9 @@
      "extra_explicit_binders": [
       "hEndpoint"
      ],
-     "ambiguous_name_match": false
+     "ambiguous_name_match": false,
+     "equivalence": false,
+     "specialised_arguments": []
     },
     {
      "name": "Spartan.Spec.Bricks.finalCheckWithClaimValueRelResidual_iff_secondSumcheckTerminalEndpointResidual",
@@ -4005,7 +4511,9 @@
      "line": 715,
      "conditional_on_residuals": [],
      "extra_explicit_binders": [],
-     "ambiguous_name_match": false
+     "ambiguous_name_match": false,
+     "equivalence": true,
+     "specialised_arguments": []
     }
    ],
    "status": "discharged"
@@ -4023,7 +4531,9 @@
      "line": 773,
      "conditional_on_residuals": [],
      "extra_explicit_binders": [],
-     "ambiguous_name_match": false
+     "ambiguous_name_match": false,
+     "equivalence": false,
+     "specialised_arguments": []
     }
    ],
    "status": "discharged"
@@ -4041,7 +4551,9 @@
      "line": 785,
      "conditional_on_residuals": [],
      "extra_explicit_binders": [],
-     "ambiguous_name_match": false
+     "ambiguous_name_match": false,
+     "equivalence": false,
+     "specialised_arguments": []
     }
    ],
    "status": "discharged"
@@ -4059,7 +4571,9 @@
      "line": 855,
      "conditional_on_residuals": [],
      "extra_explicit_binders": [],
-     "ambiguous_name_match": false
+     "ambiguous_name_match": false,
+     "equivalence": false,
+     "specialised_arguments": []
     }
    ],
    "status": "discharged"
@@ -4077,7 +4591,9 @@
      "line": 477,
      "conditional_on_residuals": [],
      "extra_explicit_binders": [],
-     "ambiguous_name_match": false
+     "ambiguous_name_match": false,
+     "equivalence": false,
+     "specialised_arguments": []
     },
     {
      "name": "Spartan.Spec.Bricks.composedPIOPResidual_of_reduction",
@@ -4086,7 +4602,9 @@
      "line": 1036,
      "conditional_on_residuals": [],
      "extra_explicit_binders": [],
-     "ambiguous_name_match": false
+     "ambiguous_name_match": false,
+     "equivalence": false,
+     "specialised_arguments": []
     }
    ],
    "status": "discharged"
@@ -4104,7 +4622,9 @@
      "line": 482,
      "conditional_on_residuals": [],
      "extra_explicit_binders": [],
-     "ambiguous_name_match": false
+     "ambiguous_name_match": false,
+     "equivalence": false,
+     "specialised_arguments": []
     },
     {
      "name": "Spartan.Spec.Bricks.composedPIOPWithClaimResidual_of_reduction",
@@ -4113,7 +4633,9 @@
      "line": 1061,
      "conditional_on_residuals": [],
      "extra_explicit_binders": [],
-     "ambiguous_name_match": false
+     "ambiguous_name_match": false,
+     "equivalence": false,
+     "specialised_arguments": []
     }
    ],
    "status": "discharged"
