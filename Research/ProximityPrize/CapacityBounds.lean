@@ -316,19 +316,27 @@ variable {ι : Type} [Fintype ι] [Nonempty ι] [DecidableEq ι]
 variable {F : Type} [Field F] [Fintype F] [DecidableEq F]
 
 /-- **ABF26 Theorem 4.9 Item 2 [BCHKS25 Theorem 1.3].** Reed-Solomon CA bound in the
-`δ_min/3`-to-Johnson regime. Let `C := RS[F, L, k]` with rate `ρ`. For
-`δ_min(C)/3 ≤ δ_fld < δ_int`:
+`δ_min/3`-to-unique-decoding regime. Let `C := RS[F, L, k]` with rate `ρ`. For
+`δ_min(C)/3 ≤ δ_fld < δ_int` and `δ_fld ≤ (1 - ρ)/2 - 1/n`:
 
   `ε_ca(C, δ_fld, δ_int) ≤`
   `  max{ (1-ρ-δ_fld) / (δ_fld·(1-ρ-2·δ_fld)·|F|), δ_int / ((δ_int-δ_fld)·|F|) }`
 
 Tighter than T4.8 (AHIV17) in the regime `δ_fld ≥ δ_min/3`. Admitted as an external
-result. -/
+result.
+
+**Unique-decoding guard `_h_udr`.** [BCHKS25, Theorem 1.3] takes
+`γ ∈ [δ/3, δ/2 - 1/n]` with `δ = 1 - k/n`, i.e. the fold radius stays inside the unique
+decoding radius. The guard is not cosmetic: past `(1 - ρ)/2` the factor `1 - ρ - 2·δ_fld`
+is `≤ 0`, the first `max` term stops being a valid count, and the bound is false. See
+`rs_epsCA_bchks25_item2_bound_fails_beyond_udr` (`F = L = 𝔽₅`, `k = 1`, `δ_fld = 3/5`,
+`δ_int = 31/40`: `ε_ca = 1`, claimed bound `31/35`). -/
 def rs_epsCA_bchks25_item2
     (domain : ι ↪ F) (k : ℕ) (δ_fld δ_int : ℝ≥0)
     (_h_dmin : (Code.minDist ((ReedSolomon.code domain k : Set (ι → F))) : ℝ)
                 / Fintype.card ι / 3 ≤ δ_fld)
-    (_h_lt : δ_fld < δ_int) : Prop :=
+    (_h_lt : δ_fld < δ_int)
+    (_h_udr : (δ_fld : ℝ) ≤ (1 - (k : ℝ) / Fintype.card ι) / 2 - 1 / Fintype.card ι) : Prop :=
     let n : ℝ := Fintype.card ι
     let ρ : ℝ := k / n
     let bound : ℝ :=
@@ -336,7 +344,7 @@ def rs_epsCA_bchks25_item2
           ((δ_int : ℝ) / ((δ_int - δ_fld) * Fintype.card F))
     epsCA (F := F) (A := F) ((ReedSolomon.code domain k : Set (ι → F))) δ_fld δ_int ≤
       ENNReal.ofReal bound
-  -- Missing ingredient: BCHKS25's RS CA bound in the δ_min/3-to-Johnson regime. The max{…}
+  -- Missing ingredient: BCHKS25's RS CA bound in the δ_min/3-to-unique-decoding regime. The max{…}
   -- RHS is a two-regime analysis (interpolation term + proximity-loss term) resting on the
   -- BCHKS25 RS interpolation/multiplicity lemmas. BCKHS25/Interpolation.lean supplies the
   -- collinear-proximates engine but not the closed-form (1-ρ-δ)/(δ(1-ρ-2δ)) RS error count.
@@ -348,6 +356,7 @@ theorem rs_epsCA_bchks25_item2_of_bound
     (h_dmin : (Code.minDist ((ReedSolomon.code domain k : Set (ι → F))) : ℝ)
                 / Fintype.card ι / 3 ≤ δ_fld)
     (h_lt : δ_fld < δ_int)
+    (h_udr : (δ_fld : ℝ) ≤ (1 - (k : ℝ) / Fintype.card ι) / 2 - 1 / Fintype.card ι)
     (hbound :
       let n : ℝ := Fintype.card ι
       let ρ : ℝ := k / n
@@ -356,7 +365,7 @@ theorem rs_epsCA_bchks25_item2_of_bound
             ((δ_int : ℝ) / ((δ_int - δ_fld) * Fintype.card F))
       epsCA (F := F) (A := F) ((ReedSolomon.code domain k : Set (ι → F))) δ_fld δ_int ≤
         ENNReal.ofReal bound) :
-    rs_epsCA_bchks25_item2 domain k δ_fld δ_int h_dmin h_lt := by
+    rs_epsCA_bchks25_item2 domain k δ_fld δ_int h_dmin h_lt h_udr := by
   simpa [rs_epsCA_bchks25_item2] using hbound
 
 /-- **ABF26 Remark 4.10 — corrected reduction form.**
@@ -456,8 +465,9 @@ theorem rs_epsCA_small_loss_r4_10
     (hγ_pos : 0 < γ) (_hγ_lt : (γ : ℝ) < 1)
     (hcross : δ_fld * (Fintype.card ι : ℝ≥0) + γ <
         (Nat.floor (δ_fld * (Fintype.card ι : ℝ≥0)) : ℝ≥0) + 1)
+    (h_udr : (δ_fld : ℝ) ≤ (1 - (k : ℝ) / Fintype.card ι) / 2 - 1 / Fintype.card ι)
     (hT492 : rs_epsCA_bchks25_item2 domain k δ_fld (δ_fld + γ / (Fintype.card ι : ℝ≥0))
-      h_dmin (r4_10_delta_lt_nearby _ _ hγ_pos))
+      h_dmin (r4_10_delta_lt_nearby _ _ hγ_pos) h_udr)
     (hbound :
       let δ_int : ℝ≥0 := δ_fld + γ / (Fintype.card ι : ℝ≥0)
       let n : ℝ := Fintype.card ι

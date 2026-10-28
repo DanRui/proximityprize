@@ -54044,3 +54044,97 @@ and `scripts/lake-locked.sh build Research.ProximityPrize.Frontier._MCAGoodRadiu
 The four printed declarations use only `propext`, `Classical.choice`, and
 `Quot.sound`. The initial tracked build passed 3502 jobs. Full repository and
 hosted gates must be reported separately.
+
+## [164-antipodal-subgroup-obstructions] 2026-10-13
+
+Hardyzyt. Exact arithmetic certificates; no new Lean theorem.
+
+[The probe](../../scripts/probes/probe_antipodal_subgroup_obstructions.py) checks two distinct
+obstructions in the actual sponsor fields from `_PrizeShapePrimeP30.lean` and
+`_PrizeShapePrimeP30Second.lean`. Their domain generators have order `n = 2^30`.
+It uses exact modular powers, polynomial products and coefficient comparisons.
+Primality and the canonical generators come from the existing Lean modules;
+this run does not repeat their kernel verification.
+
+**Unique square lift does not imply one coset.** The documentation of
+`AntipodalEvenOddDescent.isolated_root_determined` inferred single-coset confinement.
+For a generator `g`, an even `b`, and `b+2<n`, take
+
+```
+P(X) = X^(b+2) - g^2 X^b - ((g+1)X - g^2 - g).
+```
+
+Both `1` and `g` are roots. Their antipodes evaluate to `2(g+1)` and `2g(g+1)`,
+which are nonzero. Their `n/2` powers are `1` and `-1`, so they are isolated
+roots in opposite cosets of `mu_(n/2)`. The probe chooses `b = k = 2^29`.
+Thus the two head exponents are even, at least `k`, and below `n`, while the
+tail has degree one below `k`. This refutes the documented inference at the
+literal field, length and degree parameters. It does not refute the proved
+unique-lift identity or establish agreement at the production decoding radius.
+
+**Subgroup membership and no full subcoset do not repair the recorded count.**
+Set `t = g^(n/32)` and take the five lifts `t^i`, `0<=i<=4`. Split
+`Q(X) = product_i(X-t^i)` as `A(X^2)-X O(X^2)`. Both `A` and `O` have degree
+two. The probe checks the complete coefficient identity
+
+```
+A(U)^2 - U O(U)^2 = -product_i(U-t^(2i)).
+```
+
+The five roots lie in `mu_16`, hence in the actual `mu_(2^29)`, and `O` is
+nonzero at each root. There are no further roots. No two roots are antipodal.
+Every nontrivial subgroup of a cyclic group of order a power of two contains
+`-1`, so no full nontrivial subcoset is contained in this complete root set.
+Nevertheless its size is five, above the `k+1=4` cap of
+`IsoSparsityMasonStothers.IsolatedNonCosetCountResidual` at `k=3`.
+This supplies the subgroup and full-subcoset conditions missing from the
+unrestricted rational counterexamples in PRs #227 and #229.
+
+The second construction does not supply the original high-head/low-tail
+decoded-family realization or a production-rate counterexample. Its `k=3`
+is the recorded residual parameter, not the production code dimension.
+Those further restrictions need an explicit statement and a separate proof.
+The production threshold and the completion contract in #164 remain open.
+
+Reproduce with `python3 scripts/probes/probe_antipodal_subgroup_obstructions.py`.
+The output records both fields, the sparse-head witness, all five residual
+roots, their nonzero odd-part values, and the complete factorization coefficients.
+---
+
+### [164-isolated-count-residual-refuted] Unbounded `E` refutes the isolated-root cap
+
+Date: 2026-10-12. Target:
+`ProximityGap.Frontier.AntipodalEvenOddDescent.IsolatedCountResidual`, declared in
+`Frontier/_AntipodalEvenOddDescent.lean`. This is a statement-level refutation of a named
+root-count input, not a production Delta Star counterexample.
+
+The declaration quantifies over every `E O : F[X]` with only `O.natDegree < k`. `E` has no
+degree bound, no subgroup restriction and no decodedness restriction, yet the claim caps the
+isolated roots of `E(X^2) - X * O(X^2)` at `k + 1`. At `k = 1` over `ℚ`, with `O = 1` and
+`E = -X^2/6 + 7X/6`, one has `E(0) = 0`, `E(1) = 1` and `E(4) = 2`, so `x = 0, 1, 2` are
+three isolated roots against the cap `2`. The theorem `three_isolated_roots` records the
+roots and `not_isolatedCountResidual_rat_one` the contradiction.
+
+Family: the failure is not a single sporadic instance and does not need a large `E`. For every
+`k ≥ 1`, Lagrange interpolation of `(i+1)^2 ↦ i+1` on `i < k + 2` gives `Efam k` with
+`degree < k + 2` and `Efam k (x^2) = x` at `x = 1, …, k + 2`. With `O = 1` these are `k + 2`
+isolated roots against the cap `k + 1` (`Efam_eval`, `Efam_degree_lt`,
+`not_isolatedCountResidual_rat`). So any degree bound on `E` of the form `deg E < k + 2` still
+fails over `ℚ`; only a bound tied to `k` that makes `deg(E(X^2) - X * O(X^2)) < k + 2`, or a
+finite-subgroup domain restriction, can repair the statement. Same technique as the merged
+`SecondDescentStuckResidual` refutation.
+
+Scope: this refutes the recorded statement only. The intended restrictions (halved
+`2`-power subgroup domain, degree bound on `E`) are not discharged here, and the Kelley
+general-position count and the production Delta Star problem remain open. It does not
+close #164.
+
+Reproduction at the final PR commit:
+
+```
+scripts/pg-iterate.sh Research/ProximityPrize/Frontier/_IsolatedCountResidualRefuted.lean
+scripts/lake-locked.sh build Research.ProximityPrize.Frontier._IsolatedCountResidualRefuted
+```
+
+Evidence class: Lean proof certificate; all declarations of the file use only `propext`,
+`Classical.choice` and `Quot.sound`.
