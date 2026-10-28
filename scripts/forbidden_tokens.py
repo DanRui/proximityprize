@@ -98,12 +98,21 @@ AXIOM_RE = re.compile(_ID_START + r"axiom" + _ID_END + r"\s*(" + _NAME + r")")
 # declaration. Quoted-identifier spans come from `lex_lean`, which also lexes
 # string, raw-string and char literals, so a `«` inside a literal (`"«"`,
 # `'«'`) never opens a span and cannot hide a real `axiom` command.
+# Declaration heads, matched like `axiom` above: Lean's command parser does not
+# care about line breaks, so `def keep : Nat := 1 theorem t : True := trivial`
+# declares `t` mid-line. These are all keywords in Lean 4 (`lemma` with
+# Mathlib), so a live keyword token starts a declaration whatever precedes it.
 DECL_RE = re.compile(
+    _ID_START + r"(axiom|theorem|lemma|def|abbrev|opaque)" + _ID_END + r"\s*(" + _NAME + r")"
+)
+# `constant` is not a Lean 4 keyword (it is an ordinary identifier), so only a
+# line-start head is treated as a declaration.
+CONSTANT_DECL_RE = re.compile(
     # Keep leading indentation on one line: masked block comments can contain
     # thousands of whitespace-only lines, making ^\s* retry their whole suffix.
     r"^[ \t]*(?:@\[[^\]]*\]\s*)?"
     r"(?:(?:public|protected|private|scoped|noncomputable|unsafe|partial|nonrec|meta)\s+)*"
-    r"(axiom|theorem|lemma|def|abbrev|opaque|constant)" + _ID_END + r"\s*(" + _NAME + r")",
+    r"(constant)" + _ID_END + r"\s*(" + _NAME + r")",
     re.MULTILINE,
 )
 
@@ -117,13 +126,10 @@ OPAQUE_KINDS = {"opaque", "constant"}
 ALLOWLIST_PATH = Path(__file__).resolve().parent / "residual_axioms.txt"
 
 # Heads of proof-carrying declarations whose statement type must never be the
-# vacuous `True`. Anchored at a line start (after optional attributes/modifiers)
-# so it matches a real declaration, not an in-proof `have … : True`.
+# vacuous `True`. The live `theorem`/`lemma` keyword starts a declaration
+# anywhere on a line; an in-proof `have … : True` has no such keyword.
 PLACEBO_DECL_RE = re.compile(
-    r"(?m)^[ \t]*(?:@\[[^\]]*\]\s*)*"
-    r"(?:(?:public|noncomputable|protected|private|scoped|local|partial|unsafe|nonrec|meta)"
-    r"\s+)*"
-    r"(theorem|lemma)" + _ID_END + r"\s*(" + _NAME + r")"
+    _ID_START + r"(theorem|lemma)" + _ID_END + r"\s*(" + _NAME + r")"
 )
 
 # Brackets that may carry binder/type colons we must skip when locating the
@@ -355,6 +361,13 @@ def outside_quoted(offset: int, quoted: list[tuple[int, int]]) -> bool:
     return not any(a <= offset < b for a, b in quoted)
 
 
+def declaration_heads(code: str, res: LexResult) -> list[re.Match]:
+    """Live declaration heads in source order (`DECL_RE` and `CONSTANT_DECL_RE`)."""
+    heads = [m for rx in (DECL_RE, CONSTANT_DECL_RE) for m in rx.finditer(code)
+             if outside_quoted(m.start(), res.quoted)]
+    return sorted(heads, key=lambda m: m.start())
+
+
 def axiom_hits(code: str, res: LexResult) -> list[tuple[int, str]]:
     """Live `axiom` declarations: offset and declared name."""
     return [(m.start(), m.group(1)) for m in AXIOM_RE.finditer(code)
@@ -365,8 +378,7 @@ def command_view(text: str, res: LexResult) -> tuple:
     """What the checks see under one lexing: axiom, declaration and placebo hits."""
     code = code_text(text, res)
     return (axiom_hits(code, res),
-            [(m.start(), m.group(1), m.group(2)) for m in DECL_RE.finditer(code)
-             if outside_quoted(m.start(), res.quoted)],
+            [(m.start(), m.group(1), m.group(2)) for m in declaration_heads(code, res)],
             find_true_placebos(text, res))
 
 
@@ -726,8 +738,7 @@ def main() -> int:
                 line = text.count("\n", 0, m.start()) + 1
                 failures.append(f"{path}:{line}: forbidden token {m.group(1)}")
         scopes = TrueScopes(live_text, lexed.quoted)
-        decls = [m for m in DECL_RE.finditer(live_text)
-                 if outside_quoted(m.start(), lexed.quoted)]
+        decls = declaration_heads(live_text, lexed)
         for decl_index, dm in enumerate(decls):
             kind, name = dm.group(1), dm.group(2)
             next_decl_start = decls[decl_index + 1].start() if decl_index + 1 < len(decls) else None

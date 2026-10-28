@@ -403,6 +403,25 @@ class ForbiddenTokenBypasses(unittest.TestCase):
                              "theorem u : True := trivial\n",
                              "forbidden vacuous placebo `theorem/lemma u : True`")
 
+    def test_declaration_after_another_command_on_the_same_line(self):
+        # Lean's command parser ignores line breaks, so each of these declares
+        # a vacuous `True` after another command on the same line.
+        self.assert_rejected("def keep : Nat := 1 theorem hidden_residual : True := by trivial\n",
+                             "Probe.lean:1: forbidden vacuous placebo "
+                             "`theorem/lemma hidden_residual : True`")
+        self.assert_rejected("def keep : Nat := 1 def helper_residual : True := trivial\n",
+                             "Probe.lean:1: obligation-like name helper_residual")
+        self.assert_rejected("namespace Sneaky theorem ns_residual : True := by trivial\n"
+                             "end Sneaky\n", "forbidden vacuous placebo `theorem/lemma ns_residual")
+        self.assert_rejected("def keep : Nat := 1 opaque hidden_opaque : 1 = 2\n",
+                             "bodyless opaque declaration hidden_opaque")
+
+    def test_mid_line_non_declarations_stay_clean(self):
+        # An in-proof `have … : True` and an identifier named `constant` are
+        # not declaration heads.
+        self.assert_clean("theorem t : 1 = 1 := by have h : True := trivial; rfl\n"
+                          "def f : Nat → Nat := fun constant => constant\n")
+
     def test_unbalanced_scopes_fail_closed(self):
         self.assert_rejected("namespace D\ndef True : Prop := False\nend E\n"
                              "theorem t : True := trivial\n", "forbidden vacuous placebo")
