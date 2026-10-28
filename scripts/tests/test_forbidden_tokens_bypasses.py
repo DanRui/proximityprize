@@ -413,7 +413,7 @@ class ForbiddenTokenBypasses(unittest.TestCase):
                              "Probe.lean:1: obligation-like name helper_residual")
         self.assert_rejected("namespace Sneaky theorem ns_residual : True := by trivial\n"
                              "end Sneaky\n", "forbidden vacuous placebo `theorem/lemma ns_residual")
-        self.assert_rejected("def keep : Nat := 1 opaque hidden_opaque : 1 = 2\n",
+        self.assert_rejected("def keep : Nat := 1 opaque hidden_opaque : True\n",
                              "bodyless opaque declaration hidden_opaque")
 
     def test_mid_line_non_declarations_stay_clean(self):
