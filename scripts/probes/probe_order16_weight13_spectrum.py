@@ -28,7 +28,7 @@ What this probe certifies, by exact integer arithmetic only:
    single prime as at h=4.
 5. Census: for the KKH26 ceiling stack ``(x^3, x^2)`` at agreement threshold 3 on ``mu_16``,
    the MCA bad-scalar set equals the negated spectrum set exactly at every checked prime
-   (all 34 exceptional primes, the ordinary prime 1201, and the six smallest primes
+   (all 34 exceptional primes, the ordinary primes 1009 and 1201, and the six smallest primes
    ``= 1 (mod 16)`` above 4049).  Hence that stack's bad-scalar count is the spectrum
    cardinality at those primes.
 
