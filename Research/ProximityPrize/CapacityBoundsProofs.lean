@@ -96,23 +96,26 @@ section ReedSolomon
 variable {ι : Type} [Fintype ι] [Nonempty ι] [DecidableEq ι]
 variable {F : Type} [Field F] [Fintype F] [DecidableEq F]
 
-/-- **[BCHKS25 Theorem 1.3]** residual RS epsCA in the δ_min/3-to-Johnson regime
-(T4.9.2, Issue #87). -/
+/-- **[BCHKS25 Theorem 1.3]** residual RS epsCA in the δ_min/3-to-unique-decoding regime
+(T4.9.2, Issue #87). The `h_udr` guard is the paper's `γ ≤ δ/2 - 1/n`; without it the
+residual is false (`rs_epsCA_bchks25_item2_bound_fails_beyond_udr`). -/
 def bchks25_rs_epsCA_item2_residual : Prop :=
   ∀ (domain : ι ↪ F) (k : ℕ) (δ_fld δ_int : ℝ≥0),
     ∀ (h_dmin : (Code.minDist ((ReedSolomon.code domain k : Set (ι → F))) : ℝ)
                   / Fintype.card ι / 3 ≤ δ_fld),
     ∀ (h_lt : δ_fld < δ_int),
-    rs_epsCA_bchks25_item2 domain k δ_fld δ_int h_dmin h_lt
+    ∀ (h_udr : (δ_fld : ℝ) ≤ (1 - (k : ℝ) / Fintype.card ι) / 2 - 1 / Fintype.card ι),
+    rs_epsCA_bchks25_item2 domain k δ_fld δ_int h_dmin h_lt h_udr
 
 theorem rs_epsCA_bchks25_item2_proven
     (hBCHKS25 : bchks25_rs_epsCA_item2_residual (ι := ι) (F := F))
     (domain : ι ↪ F) (k : ℕ) (δ_fld δ_int : ℝ≥0)
     (h_dmin : (Code.minDist ((ReedSolomon.code domain k : Set (ι → F))) : ℝ)
                 / Fintype.card ι / 3 ≤ δ_fld)
-    (h_lt : δ_fld < δ_int) :
-    rs_epsCA_bchks25_item2 domain k δ_fld δ_int h_dmin h_lt :=
-  hBCHKS25 domain k δ_fld δ_int h_dmin h_lt
+    (h_lt : δ_fld < δ_int)
+    (h_udr : (δ_fld : ℝ) ≤ (1 - (k : ℝ) / Fintype.card ι) / 2 - 1 / Fintype.card ι) :
+    rs_epsCA_bchks25_item2 domain k δ_fld δ_int h_dmin h_lt h_udr :=
+  hBCHKS25 domain k δ_fld δ_int h_dmin h_lt h_udr
 
 /-- **[BCHKS25 Theorem 4.6]** residual Johnson-range RS epsMCA bound
 (T4.12, Issue #85). -/
